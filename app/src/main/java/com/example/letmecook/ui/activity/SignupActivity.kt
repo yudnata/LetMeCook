@@ -71,7 +71,6 @@ class SignupActivity : AppCompatActivity() {
             val gender = when (genderId) {
                 R.id.maleRadio -> "Male"
                 R.id.femaleRadio -> "Female"
-                R.id.othersRadio -> "Others"
                 else -> "Unknown"
             }
             val country = binding.selectCountry.selectedItem.toString()
@@ -127,7 +126,6 @@ class SignupActivity : AppCompatActivity() {
         val gender = when (genderId) {
             R.id.maleRadio -> "Male"
             R.id.femaleRadio -> "Female"
-            R.id.othersRadio -> "Others"
             else -> "Unknown"
         }
         val country = binding.selectCountry.selectedItem.toString()

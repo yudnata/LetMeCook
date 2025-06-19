@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/twSlate100"
+    android:background="@color/gray_100"
     tools:context=".ui.activity.EditProfileActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageBrowse"
@@ -48,7 +46,7 @@
             android:inputType="text"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="@color/secondary"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -78,7 +76,7 @@
             android:inputType="textEmailAddress"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="@color/secondary"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -123,20 +121,7 @@
                 android:buttonTintMode="multiply"
                 android:text="Female"
                 android:textSize="14sp"
-                tools:ignore="HardcodedText"
-                tools:layout_editor_absoluteX="35dp"
-                tools:layout_editor_absoluteY="669dp" />
-
-            <RadioButton
-                android:id="@+id/othersRadio"
-                android:layout_width="99dp"
-                android:layout_height="wrap_content"
-                android:buttonTintMode="multiply"
-                android:text="Others"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText"
-                tools:layout_editor_absoluteX="136dp"
-                tools:layout_editor_absoluteY="669dp" />
+                tools:ignore="HardcodedText" />
         </RadioGroup>
 
         <TextView

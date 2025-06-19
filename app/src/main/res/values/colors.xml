@@ -1,23 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="primary">#4CAF50</color>
+    <color name="primary_dark">#388E3C</color>
+    <color name="primary_light">#C8E6C9</color> <color name="accent">#FFC107</color>
+
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#757575</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#BDBDBD</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="text">#97A2B0</color>
-    <color name="black50">#00000080</color>
-    <color name="secondary">#042628</color>
-    <color name="primary">#70B9BE</color>
-    <color name="twGray200">#e5e7eb</color>
-    <color name="twGray">#888888</color>
-    <color name="twSlate100">#f1f5f9</color>
-    <color name="twSlate200">#e2e8f0</color>
-    <color name="twSlate300">#cbd5e1</color>
-    <color name="twSlate400">#94a3b8</color>
-    <color name="twBlue">#6e61ef</color>
-    <color name="twBlueBg">#dfdbfc</color>
-    <color name="twOrange">#f2a484</color>
-    <color name="twOrangeBg">#f9ddd1</color>
 
-    <!-- Gray -->
+    <color name="colorError">#F44336</color>
+
     <color name="gray_50">#F9FAFB</color>
     <color name="gray_100">#F3F4F6</color>
     <color name="gray_200">#e5e7eb</color>
@@ -28,72 +24,4 @@
     <color name="gray_700">#374151</color>
     <color name="gray_800">#1f2937</color>
     <color name="gray_900">#111827</color>
-    <color name="gray_950">#030712</color>
-
-    <!-- Neutral -->
-    <color name="neutral_50">#fafafa</color>
-    <color name="neutral_100">#f5f5f5</color>
-    <color name="neutral_200">#e5e5e5</color>
-    <color name="neutral_300">#d4d4d4</color>
-    <color name="neutral_400">#a3a3a3</color>
-    <color name="neutral_500">#737373</color>
-    <color name="neutral_600">#525252</color>
-    <color name="neutral_700">#404040</color>
-    <color name="neutral_800">#262626</color>
-    <color name="neutral_900">#171717</color>
-    <color name="neutral_950">#0a0a0a</color>
-
-    <!-- Red -->
-    <color name="red_50">#fef2f2</color>
-    <color name="red_100">#fee2e2</color>
-    <color name="red_200">#fecaca</color>
-    <color name="red_300">#fca5a5</color>
-    <color name="red_400">#f87171</color>
-    <color name="red_500">#ef4444</color>
-    <color name="red_600">#dc2626</color>
-    <color name="red_700">#b91c1c</color>
-    <color name="red_800">#991b1b</color>
-    <color name="red_900">#7f1d1d</color>
-    <color name="red_950">#450a0a</color>
-
-    <!-- Green -->
-    <color name="green_50">#f0fdf4</color>
-    <color name="green_100">#dcfce7</color>
-    <color name="green_200">#bbf7d0</color>
-    <color name="green_300">#86efac</color>
-    <color name="green_400">#4ade80</color>
-    <color name="green_500">#22c55e</color>
-    <color name="green_600">#16a34a</color>
-    <color name="green_700">#15803d</color>
-    <color name="green_800">#166534</color>
-    <color name="green_900">#14532d</color>
-    <color name="green_950">#052e16</color>
-
-    <!-- Blue -->
-    <color name="blue_50">#eff6ff</color>
-    <color name="blue_100">#dbeafe</color>
-    <color name="blue_200">#bfdbfe</color>
-    <color name="blue_300">#93c5fd</color>
-    <color name="blue_400">#60a5fa</color>
-    <color name="blue_500">#3b82f6</color>
-    <color name="blue_600">#2563eb</color>
-    <color name="blue_700">#1d4ed8</color>
-    <color name="blue_800">#1e40af</color>
-    <color name="blue_900">#1e3a8a</color>
-    <color name="blue_950">#172554</color>
-
-    <!-- Indigo -->
-    <color name="indigo_50">#eef2ff</color>
-    <color name="indigo_100">#e0e7ff</color>
-    <color name="indigo_200">#c7d2fe</color>
-    <color name="indigo_300">#a5b4fc</color>
-    <color name="indigo_400">#818cf8</color>
-    <color name="indigo_500">#6366f1</color>
-    <color name="indigo_600">#4f46e5</color>
-    <color name="indigo_700">#4338ca</color>
-    <color name="indigo_800">#3730a3</color>
-    <color name="indigo_900">#312e81</color>
-    <color name="indigo_950">#1e1b4b</color>
 </resources>
-
-

@@ -81,7 +81,7 @@ class RecipeRepositoryImpl : RecipeRepository {
     }
 
     override fun getAllRecipes(callback: (List<Recipe>, Boolean, String) -> Unit) {
-        reference.addListenerForSingleValueEvent(object : ValueEventListener {
+        reference.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val recipes = snapshot.children.mapNotNull { it.getValue(Recipe::class.java) }
                 callback(recipes, true, "Events fetched successfully")

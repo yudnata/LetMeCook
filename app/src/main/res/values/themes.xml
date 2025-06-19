@@ -1,17 +1,31 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
     <style name="Base.Theme.LetMeCook" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:fontFamily">@font/athiti</item>
+
         <item name="colorPrimary">@color/primary</item>
-        <item name="colorPrimaryVariant">@color/blue_700</item>
+        <item name="colorPrimaryVariant">@color/primary_dark</item>
         <item name="colorOnPrimary">@color/white</item>
-        <item name="colorSecondary">@color/indigo_500</item>
-        <item name="colorSecondaryVariant">@color/indigo_700</item>
+
+        <item name="colorSecondary">@color/accent</item>
+        <item name="colorSecondaryVariant">@color/accent</item>
         <item name="colorOnSecondary">@color/black</item>
-        <item name="android:statusBarColor">@color/primary</item>
-        <item name="android:windowLightStatusBar">true</item>
+
+        <item name="android:statusBarColor">@color/primary_dark</item>
+        <item name="android:windowLightStatusBar">false</item>
+
         <item name="android:windowBackground">@color/gray_50</item>
     </style>
 
     <style name="Theme.LetMeCook" parent="Base.Theme.LetMeCook" />
+
+    <style name="CustomBottomNavigationView" parent="Widget.Material3.BottomNavigationView">
+        <item name="itemIconTint">@color/bottom_nav_color</item>
+        <item name="itemTextColor">@color/bottom_nav_color</item>
+        <item name="itemActiveIndicatorStyle">@style/CustomBottomNavIndicator</item>
+    </style>
+
+    <style name="CustomBottomNavIndicator" parent="Widget.Material3.BottomNavigationView.ActiveIndicator">
+        <item name="android:color">@android:color/transparent</item>
+    </style>
+
 </resources>

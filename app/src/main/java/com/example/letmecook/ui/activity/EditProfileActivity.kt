@@ -63,7 +63,6 @@ class EditProfileActivity : AppCompatActivity() {
                     when (it.gender) {
                         "Male" -> binding.genderSelect.check(R.id.maleRadio)
                         "Female" -> binding.genderSelect.check(R.id.femaleRadio)
-                        "Others" -> binding.genderSelect.check(R.id.othersRadio)
                     }
                     binding.editFullName.setText(it.fullName)
                     binding.editEmail.setText(it.email)
@@ -96,7 +95,6 @@ class EditProfileActivity : AppCompatActivity() {
         val gender = when (genderId) {
             R.id.maleRadio -> "Male"
             R.id.femaleRadio -> "Female"
-            R.id.othersRadio -> "Others"
             else -> "Unknown"
         }
         val country = binding.selectCountry.selectedItem.toString()

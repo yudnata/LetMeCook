@@ -26,7 +26,6 @@
                 android:src="@drawable/recipe_preview"
                 android:scaleType="centerCrop"/>
 
-            <!-- Category Badge -->
             <TextView
                 android:id="@+id/categoryBadge"
                 android:layout_width="wrap_content"
@@ -38,7 +37,7 @@
                 android:textColor="@android:color/black"
                 android:textSize="12sp"
                 android:text="Non-Veg"
-               />
+                />
         </FrameLayout>
 
         <LinearLayout
@@ -77,7 +76,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:textColor="@color/text"
+                    android:textColor="@color/secondary_text"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     tools:text="27g proteins" />
@@ -94,7 +93,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:textColor="@color/text"
+                    android:textColor="@color/secondary_text"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     tools:text="15 mins" />
@@ -119,7 +118,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
                     android:layout_weight="1"
-                    android:textColor="@color/text"
+                    android:textColor="@color/secondary_text"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     tools:text="65g carbs" />
@@ -136,13 +135,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:textColor="@color/text"
+                    android:textColor="@color/secondary_text"
                     android:textStyle="bold"
                     android:textSize="14sp"
                     tools:text="91g fats" />
             </LinearLayout>
 
-            <!-- Price and Booking Section -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

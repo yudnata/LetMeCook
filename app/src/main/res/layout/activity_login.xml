@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/twSlate100"
+    android:background="@color/gray_100"
     tools:context=".ui.activity.LoginActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/imageBrowse"
@@ -28,7 +27,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="128dp"
             android:text="Welcome Back!"
-            android:textColor="@color/secondary"
+            android:textColor="@color/primary_text"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
@@ -58,7 +57,7 @@
             android:inputType="textEmailAddress"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="@color/secondary"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +86,7 @@
             android:inputType="textPassword"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:textColor="@color/secondary"
+            android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

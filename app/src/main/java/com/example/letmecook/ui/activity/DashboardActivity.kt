@@ -7,7 +7,6 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.example.letmecook.R
 import com.example.letmecook.databinding.ActivityDashboardBinding
 import com.example.letmecook.ui.fragment.BookmarksFragment
@@ -17,21 +16,15 @@ import com.example.letmecook.ui.fragment.RecipesFragment
 
 class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding
+    private val fragmentManager: FragmentManager = supportFragmentManager
 
-    private fun replaceFragment(fragment: Fragment) {
-        val fragmentManager: FragmentManager = supportFragmentManager
-        val fragmentTransaction: FragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.main, fragment)
-        fragmentTransaction.commit()
-    }
+    // Buat instance untuk setiap fragment sekali saja
+    private val homeFragment: Fragment = HomeFragment()
+    private val bookmarksFragment: Fragment = BookmarksFragment()
+    private val recipesFragment: Fragment = RecipesFragment()
+    private val profileFragment: Fragment = ProfileFragment()
 
-    fun navigateToBookmarks() {
-        binding.bottomNav.selectedItemId = R.id.myBookmarksFragment
-    }
-
-    fun navigateToRecipes() {
-        binding.bottomNav.selectedItemId = R.id.myRecipesFragment
-    }
+    private var activeFragment: Fragment = homeFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,14 +33,14 @@ class DashboardActivity : AppCompatActivity() {
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        replaceFragment(HomeFragment())
+        setupFragments()
 
         binding.bottomNav.setOnItemSelectedListener { item ->
             when (item.itemId) {
-                R.id.homeFragment -> replaceFragment(HomeFragment())
-                R.id.myBookmarksFragment -> replaceFragment(BookmarksFragment())
-                R.id.myRecipesFragment -> replaceFragment(RecipesFragment())
-                R.id.profileFragment -> replaceFragment(ProfileFragment())
+                R.id.homeFragment -> switchFragment(homeFragment)
+                R.id.myBookmarksFragment -> switchFragment(bookmarksFragment)
+                R.id.myRecipesFragment -> switchFragment(recipesFragment)
+                R.id.profileFragment -> switchFragment(profileFragment)
             }
             true
         }
@@ -57,5 +50,30 @@ class DashboardActivity : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+    }
+
+    private fun setupFragments() {
+        val transaction = fragmentManager.beginTransaction()
+        // Tambahkan semua fragment tapi sembunyikan yang tidak aktif
+        transaction.add(R.id.mainFrame, profileFragment, "4").hide(profileFragment)
+        transaction.add(R.id.mainFrame, recipesFragment, "3").hide(recipesFragment)
+        transaction.add(R.id.mainFrame, bookmarksFragment, "2").hide(bookmarksFragment)
+        transaction.add(R.id.mainFrame, homeFragment, "1")
+        transaction.commit()
+    }
+
+    private fun switchFragment(fragment: Fragment) {
+        if (fragment != activeFragment) {
+            fragmentManager.beginTransaction().hide(activeFragment).show(fragment).commit()
+            activeFragment = fragment
+        }
+    }
+
+    fun navigateToBookmarks() {
+        binding.bottomNav.selectedItemId = R.id.myBookmarksFragment
+    }
+
+    fun navigateToRecipes() {
+        binding.bottomNav.selectedItemId = R.id.myRecipesFragment
     }
 }
