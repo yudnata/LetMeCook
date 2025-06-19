@@ -7,6 +7,15 @@
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+
+/wrapper/
+wrapper/
+**/wrapper/
+
+/daemon/
+daemon/
+**/daemon/
+
 /caches/
 caches/
 **/caches/
