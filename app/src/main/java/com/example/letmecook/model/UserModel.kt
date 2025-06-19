@@ -1,4 +1,4 @@
-package com.example.recipely.model
+package com.example.letmecook.model
 
 import android.os.Parcel
 import android.os.Parcelable

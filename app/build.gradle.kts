@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.recipely"
+    namespace = "com.example.letmecook"
     compileSdk = 35
 
     buildFeatures {
@@ -13,7 +13,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.example.recipely"
+        applicationId = "com.example.letmecook"
         minSdk = 27
         targetSdk = 35
         versionCode = 1

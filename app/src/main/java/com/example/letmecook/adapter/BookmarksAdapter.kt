@@ -4,10 +4,10 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.recipely.R
-import com.example.recipely.databinding.ItemBookmarkBinding
-import com.example.recipely.model.BookmarkModel
-import com.example.recipely.model.Recipe
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ItemBookmarkBinding
+import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.model.Recipe
 
 class BookmarksAdapter(
     private var bookmarkList: MutableList<BookmarkModel>,

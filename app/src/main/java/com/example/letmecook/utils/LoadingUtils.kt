@@ -1,8 +1,8 @@
-package com.example.recipely.utils
+package com.example.letmecook.utils
 
 import android.app.Activity
 import android.app.AlertDialog
-import com.example.recipely.R
+import com.example.letmecook.R
 
 class LoadingUtils(private val activity: Activity) {
     private lateinit var alertDialog: AlertDialog

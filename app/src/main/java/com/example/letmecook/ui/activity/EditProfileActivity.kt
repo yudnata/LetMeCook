@@ -1,19 +1,19 @@
-package com.example.recipely.ui.activity
+package com.example.letmecook.ui.activity
 
 import android.net.Uri
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.example.recipely.R
-import com.example.recipely.adapter.CitiesAdapter
-import com.example.recipely.adapter.CountriesAdapter
-import com.example.recipely.adapter.countries
-import com.example.recipely.databinding.ActivityEditProfileBinding
-import com.example.recipely.repository.UserRepositoryImpl
-import com.example.recipely.utils.ImageUtils
-import com.example.recipely.utils.LoadingUtils
-import com.example.recipely.viewmodel.UserViewModel
+import com.example.letmecook.R
+import com.example.letmecook.adapter.CitiesAdapter
+import com.example.letmecook.adapter.CountriesAdapter
+import com.example.letmecook.adapter.countries
+import com.example.letmecook.databinding.ActivityEditProfileBinding
+import com.example.letmecook.repository.UserRepositoryImpl
+import com.example.letmecook.utils.ImageUtils
+import com.example.letmecook.utils.LoadingUtils
+import com.example.letmecook.viewmodel.UserViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 

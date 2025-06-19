@@ -1,4 +1,4 @@
-package com.example.recipely.adapter
+package com.example.letmecook.adapter
 
 import android.content.Context
 import android.widget.ArrayAdapter

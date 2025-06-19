@@ -1,10 +1,10 @@
-package com.example.recipely.viewmodel
+package com.example.letmecook.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.MutableLiveData
-import com.example.recipely.model.UserModel
-import com.example.recipely.repository.UserRepository
+import com.example.letmecook.model.UserModel
+import com.example.letmecook.repository.UserRepository
 import com.google.firebase.auth.FirebaseUser
 
 class UserViewModel(private val repo: UserRepository) {

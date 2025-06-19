@@ -1,6 +1,6 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
-import com.example.recipely.model.BookmarkModel
+import com.example.letmecook.model.BookmarkModel
 
 interface BookmarkRepository {
     fun createBookmark(bookmark: BookmarkModel, callback: (Boolean, String, String) -> Unit)

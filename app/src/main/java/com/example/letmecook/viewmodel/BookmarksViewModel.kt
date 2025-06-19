@@ -1,8 +1,8 @@
-package com.example.recipely.viewmodel
+package com.example.letmecook.viewmodel
 
 import androidx.lifecycle.ViewModel
-import com.example.recipely.model.BookmarkModel
-import com.example.recipely.repository.BookmarkRepositoryImpl
+import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.repository.BookmarkRepositoryImpl
 
 class BookmarkViewModel(
     private val repo: BookmarkRepositoryImpl = BookmarkRepositoryImpl()

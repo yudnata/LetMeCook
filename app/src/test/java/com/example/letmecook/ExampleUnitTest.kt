@@ -1,4 +1,4 @@
-package com.example.recipely
+package com.example.letmecook
 
 import org.junit.Test
 

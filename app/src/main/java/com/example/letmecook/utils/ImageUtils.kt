@@ -1,4 +1,4 @@
-package com.example.recipely.utils
+package com.example.letmecook.utils
 
 import android.content.Context
 import android.content.Intent

@@ -1,4 +1,4 @@
-package com.example.recipely.ui.fragment
+package com.example.letmecook.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,17 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipely.adapter.BookmarksAdapter
-import com.example.recipely.databinding.FragmentBookmarksBinding
-import com.example.recipely.model.BookmarkModel
-import com.example.recipely.model.Recipe
-import com.example.recipely.repository.BookmarkRepositoryImpl
-import com.example.recipely.repository.RecipeRepositoryImpl
-import com.example.recipely.repository.UserRepositoryImpl
-import com.example.recipely.ui.activity.RecipeDetailsActivity
-import com.example.recipely.viewmodel.BookmarkViewModel
-import com.example.recipely.viewmodel.RecipeViewModel
-import com.example.recipely.viewmodel.UserViewModel
+import com.example.letmecook.adapter.BookmarksAdapter
+import com.example.letmecook.databinding.FragmentBookmarksBinding
+import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.model.Recipe
+import com.example.letmecook.repository.BookmarkRepositoryImpl
+import com.example.letmecook.repository.RecipeRepositoryImpl
+import com.example.letmecook.repository.UserRepositoryImpl
+import com.example.letmecook.ui.activity.RecipeDetailsActivity
+import com.example.letmecook.viewmodel.BookmarkViewModel
+import com.example.letmecook.viewmodel.RecipeViewModel
+import com.example.letmecook.viewmodel.UserViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class BookmarksFragment : Fragment() {

@@ -1,11 +1,11 @@
-package com.example.recipely.adapter
+package com.example.letmecook.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.example.recipely.R
-import com.example.recipely.databinding.ItemMyRecipeBinding
-import com.example.recipely.model.Recipe
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ItemMyRecipeBinding
+import com.example.letmecook.model.Recipe
 import com.squareup.picasso.Picasso
 
 class MyRecipesAdapter(

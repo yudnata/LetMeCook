@@ -1,4 +1,4 @@
-package com.example.recipely.ui.activity
+package com.example.letmecook.ui.activity
 
 import android.content.Context
 import android.content.Intent
@@ -8,11 +8,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.recipely.R
-import com.example.recipely.databinding.ActivityLoginBinding
-import com.example.recipely.repository.UserRepositoryImpl
-import com.example.recipely.utils.LoadingUtils
-import com.example.recipely.viewmodel.UserViewModel
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ActivityLoginBinding
+import com.example.letmecook.repository.UserRepositoryImpl
+import com.example.letmecook.utils.LoadingUtils
+import com.example.letmecook.viewmodel.UserViewModel
 import com.google.android.material.snackbar.Snackbar
 
 class LoginActivity : AppCompatActivity() {

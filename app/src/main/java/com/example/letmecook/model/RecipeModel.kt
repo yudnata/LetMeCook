@@ -1,4 +1,4 @@
-package com.example.recipely.model
+package com.example.letmecook.model
 
 data class Recipe (
     var id: String = "",

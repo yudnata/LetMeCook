@@ -1,4 +1,4 @@
-package com.example.recipely.ui.fragment
+package com.example.letmecook.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
@@ -9,16 +9,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
-import com.example.recipely.R
-import com.example.recipely.adapter.RecipesAdapter
-import com.example.recipely.databinding.FragmentHomeBinding
-import com.example.recipely.model.BookmarkModel
-import com.example.recipely.model.Recipe
-import com.example.recipely.repository.RecipeRepositoryImpl
-import com.example.recipely.ui.activity.RecipeDetailsActivity
-import com.example.recipely.utils.LoadingUtils
-import com.example.recipely.viewmodel.BookmarkViewModel
-import com.example.recipely.viewmodel.RecipeViewModel
+import com.example.letmecook.R
+import com.example.letmecook.adapter.RecipesAdapter
+import com.example.letmecook.databinding.FragmentHomeBinding
+import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.model.Recipe
+import com.example.letmecook.repository.RecipeRepositoryImpl
+import com.example.letmecook.ui.activity.RecipeDetailsActivity
+import com.example.letmecook.utils.LoadingUtils
+import com.example.letmecook.viewmodel.BookmarkViewModel
+import com.example.letmecook.viewmodel.RecipeViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class HomeFragment : Fragment() {

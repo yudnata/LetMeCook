@@ -1,12 +1,12 @@
-package com.example.recipely.viewmodel
+package com.example.letmecook.viewmodel
 
 import android.content.Context
 import android.net.Uri
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.recipely.model.Recipe
-import com.example.recipely.repository.RecipeRepository
+import com.example.letmecook.model.Recipe
+import com.example.letmecook.repository.RecipeRepository
 
 class RecipeViewModel(private val repo: RecipeRepository) : ViewModel() {
     private val _recipeData = MutableLiveData<List<Recipe>>()

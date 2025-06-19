@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Recipely" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Base.Theme.LetMeCook" parent="Theme.Material3.DayNight.NoActionBar">
         <item name="android:fontFamily">@font/athiti</item>
         <item name="colorPrimary">@color/primary</item>
         <item name="colorPrimaryVariant">@color/blue_700</item>
@@ -13,5 +13,5 @@
         <item name="android:windowBackground">@color/gray_50</item>
     </style>
 
-    <style name="Theme.Recipely" parent="Base.Theme.Recipely" />
+    <style name="Theme.LetMeCook" parent="Base.Theme.LetMeCook" />
 </resources>

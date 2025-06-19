@@ -1,4 +1,4 @@
-package com.example.recipely.adapter
+package com.example.letmecook.adapter
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater
@@ -8,8 +8,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.recipely.R
-import com.example.recipely.model.Recipe
+import com.example.letmecook.R
+import com.example.letmecook.model.Recipe
 import com.google.android.material.button.MaterialButton
 
 class RecipesAdapter(

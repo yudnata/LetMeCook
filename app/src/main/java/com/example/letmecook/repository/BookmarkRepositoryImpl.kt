@@ -1,6 +1,6 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
-import com.example.recipely.model.BookmarkModel
+import com.example.letmecook.model.BookmarkModel
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference

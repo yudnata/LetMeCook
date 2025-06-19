@@ -1,4 +1,4 @@
-package com.example.recipely.ui.fragment
+package com.example.letmecook.ui.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,13 +9,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import com.example.recipely.R
-import com.example.recipely.databinding.FragmentProfileBinding
-import com.example.recipely.repository.UserRepositoryImpl
-import com.example.recipely.ui.activity.DashboardActivity
-import com.example.recipely.ui.activity.EditProfileActivity
-import com.example.recipely.ui.activity.LoginActivity
-import com.example.recipely.viewmodel.UserViewModel
+import com.example.letmecook.R
+import com.example.letmecook.databinding.FragmentProfileBinding
+import com.example.letmecook.repository.UserRepositoryImpl
+import com.example.letmecook.ui.activity.DashboardActivity
+import com.example.letmecook.ui.activity.EditProfileActivity
+import com.example.letmecook.ui.activity.LoginActivity
+import com.example.letmecook.viewmodel.UserViewModel
 import com.squareup.picasso.Picasso
 
 class ProfileFragment : Fragment() {

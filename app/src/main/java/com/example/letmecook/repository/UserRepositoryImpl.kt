@@ -1,4 +1,4 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
 import android.content.Context
 import android.database.Cursor
@@ -8,7 +8,7 @@ import android.os.Looper
 import android.provider.OpenableColumns
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
-import com.example.recipely.model.UserModel
+import com.example.letmecook.model.UserModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot

@@ -1,8 +1,8 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
 import android.content.Context
 import android.net.Uri
-import com.example.recipely.model.UserModel
+import com.example.letmecook.model.UserModel
 import com.google.firebase.auth.FirebaseUser
 
 interface UserRepository {

@@ -1,9 +1,9 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
 
 import android.content.Context
 import android.net.Uri
-import com.example.recipely.model.Recipe
+import com.example.letmecook.model.Recipe
 
 interface RecipeRepository {
     fun createRecipe(recipe: Recipe, callback: (Boolean, String, String) -> Unit)

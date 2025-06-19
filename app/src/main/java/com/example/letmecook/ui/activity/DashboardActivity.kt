@@ -1,4 +1,4 @@
-package com.example.recipely.ui.activity
+package com.example.letmecook.ui.activity
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -8,12 +8,12 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
-import com.example.recipely.R
-import com.example.recipely.databinding.ActivityDashboardBinding
-import com.example.recipely.ui.fragment.BookmarksFragment
-import com.example.recipely.ui.fragment.HomeFragment
-import com.example.recipely.ui.fragment.ProfileFragment
-import com.example.recipely.ui.fragment.RecipesFragment
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ActivityDashboardBinding
+import com.example.letmecook.ui.fragment.BookmarksFragment
+import com.example.letmecook.ui.fragment.HomeFragment
+import com.example.letmecook.ui.fragment.ProfileFragment
+import com.example.letmecook.ui.fragment.RecipesFragment
 
 class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding

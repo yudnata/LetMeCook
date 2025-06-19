@@ -1,4 +1,4 @@
-package com.example.recipely.ui.activity
+package com.example.letmecook.ui.activity
 
 import android.net.Uri
 import android.os.Bundle
@@ -8,15 +8,15 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.example.recipely.R
-import com.example.recipely.databinding.ActivityAddRecipeBinding
-import com.example.recipely.model.Recipe
-import com.example.recipely.repository.RecipeRepositoryImpl
-import com.example.recipely.repository.UserRepositoryImpl
-import com.example.recipely.utils.ImageUtils
-import com.example.recipely.utils.LoadingUtils
-import com.example.recipely.viewmodel.RecipeViewModel
-import com.example.recipely.viewmodel.UserViewModel
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ActivityAddRecipeBinding
+import com.example.letmecook.model.Recipe
+import com.example.letmecook.repository.RecipeRepositoryImpl
+import com.example.letmecook.repository.UserRepositoryImpl
+import com.example.letmecook.utils.ImageUtils
+import com.example.letmecook.utils.LoadingUtils
+import com.example.letmecook.viewmodel.RecipeViewModel
+import com.example.letmecook.viewmodel.UserViewModel
 import com.google.android.material.snackbar.Snackbar
 import com.squareup.picasso.Picasso
 

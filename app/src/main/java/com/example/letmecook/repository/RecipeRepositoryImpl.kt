@@ -1,4 +1,4 @@
-package com.example.recipely.repository
+package com.example.letmecook.repository
 
 import android.content.Context
 import android.net.Uri
@@ -6,7 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import com.cloudinary.Cloudinary
 import com.cloudinary.utils.ObjectUtils
-import com.example.recipely.model.Recipe
+import com.example.letmecook.model.Recipe
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference

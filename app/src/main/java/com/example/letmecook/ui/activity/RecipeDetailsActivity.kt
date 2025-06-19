@@ -1,18 +1,18 @@
-package com.example.recipely.ui.activity
+package com.example.letmecook.ui.activity
 
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
-import com.example.recipely.R
-import com.example.recipely.databinding.ActivityRecipeDetailsBinding
-import com.example.recipely.model.BookmarkModel
-import com.example.recipely.model.Recipe
-import com.example.recipely.repository.RecipeRepositoryImpl
-import com.example.recipely.utils.LoadingUtils
-import com.example.recipely.viewmodel.BookmarkViewModel
-import com.example.recipely.viewmodel.RecipeViewModel
+import com.example.letmecook.R
+import com.example.letmecook.databinding.ActivityRecipeDetailsBinding
+import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.model.Recipe
+import com.example.letmecook.repository.RecipeRepositoryImpl
+import com.example.letmecook.utils.LoadingUtils
+import com.example.letmecook.viewmodel.BookmarkViewModel
+import com.example.letmecook.viewmodel.RecipeViewModel
 import com.google.firebase.auth.FirebaseAuth
 
 class RecipeDetailsActivity : AppCompatActivity() {
