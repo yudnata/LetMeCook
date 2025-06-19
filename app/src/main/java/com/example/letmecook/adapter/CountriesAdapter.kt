@@ -4,16 +4,16 @@ import android.content.Context
 import android.widget.ArrayAdapter
 
 val countries = arrayOf(
-    "Nepal",
-    "France",
-    "USA",
+    "Indonesia",
+    "Malaysia",
+    "China",
+    "Thailand",
     "Australia",
-    "Canada",
+    "Philippines",
     "India",
     "Japan",
-    "Germany",
-    "Italy",
-    "Brazil"
+    "South Korea",
+    "Vietnam"
 )
 
 class CountriesAdapter(
