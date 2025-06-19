@@ -68,7 +68,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="26dp"
             android:layout_marginTop="10dp"
-            android:text="mailtotrishan3@gmail.com"
+            android:text="yudhinata04@gmail.com"
             app:layout_constraintStart_toEndOf="@+id/textView11"
             app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -87,7 +87,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="24dp"
-            android:text="Trishan Wagle"
+            android:text="Yudhi Adinata"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/userAvatar"

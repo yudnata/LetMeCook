@@ -53,7 +53,7 @@ class HomeFragment : Fragment() {
             .into(binding.bannerImage)
 
         binding.bannerTitle.text = "Asian white noodle with extra seafood"
-        binding.bannerDescription.text = "Exclusive recipe by Chef. Trishan Wagle!"
+        binding.bannerDescription.text = "Exclusive recipe by Chef Juna!"
     }
 
     private fun setupRecipesList() {
