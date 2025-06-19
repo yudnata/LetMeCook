@@ -1,0 +1,7 @@
+<!-- banner_gradient.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <gradient
+        android:angle="270"
+        android:endColor="#CC000000"
+        android:startColor="#00000000" />
+</shape>
