@@ -115,9 +115,9 @@ class UserRepositoryImpl : UserRepository {
 
     private val cloudinary = Cloudinary(
         mapOf(
-            "cloud_name" to "dnqet3vq1",
-            "api_key" to "241141791476868",
-            "api_secret" to "vkvZYuioJ-8u-LZOWHyUwbz46HM"
+            "cloud_name" to "djxmq4ygp",
+            "api_key" to "111292599562134",
+            "api_secret" to "rffXWFsS8dHFMYTsxymlPkeNENo    "
         )
     )
 
