@@ -117,7 +117,7 @@ class UserRepositoryImpl : UserRepository {
         mapOf(
             "cloud_name" to "djxmq4ygp",
             "api_key" to "111292599562134",
-            "api_secret" to "rffXWFsS8dHFMYTsxymlPkeNENo    "
+            "api_secret" to "rffXWFsS8dHFMYTsxymlPkeNENo"
         )
     )
 
@@ -126,9 +126,7 @@ class UserRepositoryImpl : UserRepository {
         executor.execute {
             try {
                 val inputStream: InputStream? = context.contentResolver.openInputStream(imageUri)
-                var fileName = getFileNameFromUri(context, imageUri)
-
-                fileName = fileName?.substringBeforeLast(".") ?: "uploaded_image"
+                val fileName = "profile_image_${System.currentTimeMillis()}"
 
                 val response = cloudinary.uploader().upload(
                     inputStream, ObjectUtils.asMap(

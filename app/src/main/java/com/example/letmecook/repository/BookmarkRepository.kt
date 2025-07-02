@@ -16,4 +16,5 @@ interface BookmarkRepository {
         recipeId: String,
         callback: (List<BookmarkModel>, Boolean, String) -> Unit
     )
+    fun findBookmarkByUserAndRecipe(userId: String, recipeId: String, callback: (BookmarkModel?) -> Unit)
 }

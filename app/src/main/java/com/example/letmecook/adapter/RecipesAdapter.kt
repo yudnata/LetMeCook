@@ -15,7 +15,8 @@ import com.google.android.material.button.MaterialButton
 class RecipesAdapter(
     private var allRecipes: List<Recipe> = emptyList(),
     private val onRecipeClick: (Recipe) -> Unit,
-    private val onBookMarkClick: (Recipe) -> Unit
+    private val onBookMarkClick: (Recipe) -> Unit,
+    private val onGetAuthorName: (String, (String) -> Unit) -> Unit
 ) : RecyclerView.Adapter<RecipesAdapter.RecipeViewHolder>() {
 
     private var filteredRecipes: List<Recipe> = allRecipes
@@ -24,6 +25,7 @@ class RecipesAdapter(
         val recipeImage: ImageView = view.findViewById(R.id.recipeImage)
         val categoryBadge: TextView = view.findViewById(R.id.categoryBadge)
         val recipeTitle: TextView = view.findViewById(R.id.recipeTitle)
+        val authorName: TextView = view.findViewById(R.id.authorName)
         val recipeProtein: TextView = view.findViewById(R.id.recipeProtein)
         val recipeDuration: TextView = view.findViewById(R.id.recipeDuration)
         val recipeCarbs: TextView = view.findViewById(R.id.recipeCarbs)
@@ -46,13 +48,35 @@ class RecipesAdapter(
 
         holder.categoryBadge.text = recipe.category
         holder.recipeTitle.text = recipe.title
+
+        if (recipe.creatorId.isNotEmpty()) {
+            onGetAuthorName(recipe.creatorId) { authorName ->
+                holder.authorName.text = "by $authorName"
+            }
+        } else {
+            holder.authorName.text = "by Unknown"
+        }
+
         holder.recipeProtein.text = recipe.proteins
         holder.recipeDuration.text = recipe.duration
         holder.recipeCarbs.text = recipe.carbs
         holder.recipeFats.text = recipe.fats
 
+        // --- LOGIKA UTAMA TOMBOL DI SINI ---
+        if (recipe.isBookmarked) {
+            holder.bookmarkButton.text = "Recipe Saved"
+            holder.bookmarkButton.isEnabled = false
+        } else {
+            holder.bookmarkButton.text = "Save Recipe"
+            holder.bookmarkButton.isEnabled = true
+        }
+
         holder.itemView.setOnClickListener { onRecipeClick(recipe) }
-        holder.bookmarkButton.setOnClickListener { onBookMarkClick(recipe) }
+        holder.bookmarkButton.setOnClickListener {
+            if (holder.bookmarkButton.isEnabled) {
+                onBookMarkClick(recipe)
+            }
+        }
     }
 
     override fun getItemCount() = filteredRecipes.size

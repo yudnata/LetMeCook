@@ -57,6 +57,14 @@
                 android:textSize="18sp"
                 tools:text="Healthy Taco Salad with fresh vegetable"/>
 
+            <TextView
+                android:id="@+id/authorName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/secondary_text"
+                android:textSize="12sp"
+                tools:text="By Chef Juna"/>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

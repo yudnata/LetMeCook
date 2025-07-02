@@ -74,7 +74,7 @@ class BookmarkRepositoryImpl : BookmarkRepository {
         userId: String,
         callback: (List<BookmarkModel>, Boolean, String) -> Unit
     ) {
-        reference.orderByChild("userId").equalTo(userId).addListenerForSingleValueEvent(object :
+        reference.orderByChild("userId").equalTo(userId).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val bookmarks =
@@ -104,5 +104,26 @@ class BookmarkRepositoryImpl : BookmarkRepository {
                 callback(emptyList(), false, error.message)
             }
         })
+    }
+
+    override fun findBookmarkByUserAndRecipe(userId: String, recipeId: String, callback: (BookmarkModel?) -> Unit) {
+        reference.orderByChild("userId").equalTo(userId)
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    var foundBookmark: BookmarkModel? = null
+                    for (bookmarkSnapshot in snapshot.children) {
+                        val bookmark = bookmarkSnapshot.getValue(BookmarkModel::class.java)
+                        if (bookmark?.recipeId == recipeId) {
+                            foundBookmark = bookmark
+                            break
+                        }
+                    }
+                    callback(foundBookmark)
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    callback(null)
+                }
+            })
     }
 }

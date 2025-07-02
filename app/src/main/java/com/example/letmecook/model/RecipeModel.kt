@@ -11,5 +11,8 @@ data class Recipe (
     val fats: String = "",
     val category: String = "",
     val creatorId: String = "",
+    var creatorName: String = "",
     val imageUrl: String = "",
+    @set:JvmName("setBookmarked")
+    var isBookmarked: Boolean = false // Tambahkan variabel ini
 )

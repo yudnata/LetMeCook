@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.letmecook.adapter.BookmarksAdapter
 import com.example.letmecook.databinding.FragmentBookmarksBinding
@@ -47,13 +48,12 @@ class BookmarksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupRecyclerView()
-        fetchUserBookmarks()
+        observeUserBookmarks() // Panggil fungsi yang baru
     }
 
     private fun setupRecyclerView() {
         bookmarksAdapter = BookmarksAdapter(mutableListOf(), onRecipeClick = { event -> navigateToRecipeDetail(event) },) { recipeId, callback ->
-
-            recipeViewModel.getRecipe(recipeId) { event, success, message ->
+            recipeViewModel.getRecipe(recipeId) { event, _, _ ->
                 callback(event)
             }
         }
@@ -66,34 +66,32 @@ class BookmarksFragment : Fragment() {
         }
     }
 
-    private fun fetchUserBookmarks() {
+    // --- FUNGSI BARU UNTUK MENGAMATI LIVEDATA ---
+    private fun observeUserBookmarks() {
         val currentUser = userViewModel.getCurrentUser()
         if (currentUser == null) {
-            Snackbar.make(binding.myBookmarkRoot, "User not logged in", Snackbar.LENGTH_SHORT)
-                .show()
+            Snackbar.make(binding.myBookmarkRoot, "User not logged in", Snackbar.LENGTH_SHORT).show()
+            updateEmptyState(true)
             return
         }
-        bookmarkViewModel.getUserBookmarks(currentUser.uid) { bookmarks, success, message ->
-            if (success) {
-                bookmarksAdapter.setData(bookmarks)
-                updateEmptyState(bookmarks.isEmpty())
-            } else {
-                Snackbar.make(binding.myBookmarkRoot, "Error: $message", Snackbar.LENGTH_SHORT)
-                    .show()
-                updateEmptyState(true)
-            }
-        }
+
+        // Mulai mendengarkan perubahan pada daftar bookmark pengguna
+        bookmarkViewModel.listenForUserBookmarks(currentUser.uid)
+
+        // Amati LiveData untuk pembaruan
+        bookmarkViewModel.userBookmarks.observe(viewLifecycleOwner, Observer { bookmarks ->
+            bookmarksAdapter.setData(bookmarks)
+            updateEmptyState(bookmarks.isEmpty())
+        })
     }
 
     private fun deleteBookmark(bookmark: BookmarkModel) {
         bookmarkViewModel.deleteBookmark(bookmark.id) { success, message ->
             if (success) {
-                Snackbar.make(binding.myBookmarkRoot, "Bookmark deleted", Snackbar.LENGTH_SHORT)
-                    .show()
-                fetchUserBookmarks()
+                Snackbar.make(binding.myBookmarkRoot, "Bookmark deleted", Snackbar.LENGTH_SHORT).show()
+                // Tidak perlu memanggil fetch lagi, observer akan menangani pembaruan
             } else {
-                Snackbar.make(binding.myBookmarkRoot, "Error: $message", Snackbar.LENGTH_SHORT)
-                    .show()
+                Snackbar.make(binding.myBookmarkRoot, "Error: $message", Snackbar.LENGTH_SHORT).show()
             }
         }
     }

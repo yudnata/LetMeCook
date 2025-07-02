@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.example.letmecook.R
 import com.example.letmecook.databinding.ActivityRecipeDetailsBinding
@@ -22,6 +23,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
     private var recipeId: String = ""
     private var currentRecipe: Recipe? = null
     private lateinit var loader: LoadingUtils
+    private var currentUserId: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +31,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         loader = LoadingUtils(this)
+        currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
         recipeId = intent.getStringExtra("RECIPE_ID") ?: ""
         if (recipeId.isEmpty()) {
@@ -39,38 +42,50 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
         setupUI()
         loadRecipeDetails()
+        observeBookmarkChanges()
     }
 
     private fun setupUI() {
-        // Set up back button
-        binding.backButton.setOnClickListener {
-            finish()
-        }
-
-        // Set up favorite button
+        binding.backButton.setOnClickListener { finish() }
+        binding.shareButton.setOnClickListener { Toast.makeText(this, "Share functionality coming soon", Toast.LENGTH_SHORT).show() }
         binding.favoriteButton.setOnClickListener {
             Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
             binding.favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
         }
-
         binding.bookmarkbutton.setOnClickListener {
-            currentRecipe?.let { recipe ->
-                handleBookmark(recipe)
-            }
+            handleBookmark()
         }
+    }
 
-        // Set up share button
-        binding.shareButton.setOnClickListener {
-            Toast.makeText(this, "Share functionality coming soon", Toast.LENGTH_SHORT).show()
+    private fun setButtonToSavedState() {
+        binding.bookmarkbutton.text = "Recipe Saved"
+        binding.bookmarkbutton.isEnabled = false
+    }
+
+    private fun setButtonToNormalState() {
+        binding.bookmarkbutton.text = "Save this recipe"
+        binding.bookmarkbutton.isEnabled = true
+    }
+
+    private fun observeBookmarkChanges() {
+        val userId = currentUserId
+        if (userId != null) {
+            bookmarkViewModel.listenForUserBookmarks(userId)
+            bookmarkViewModel.userBookmarks.observe(this, Observer { bookmarks ->
+                val isBookmarked = bookmarks.any { it.recipeId == recipeId }
+                if (isBookmarked) {
+                    setButtonToSavedState()
+                } else {
+                    setButtonToNormalState()
+                }
+            })
         }
     }
 
     private fun loadRecipeDetails() {
         loader.show()
-
         recipeViewModel.getRecipe(recipeId) { recipe, success, message ->
             loader.dismiss()
-
             if (success && recipe != null) {
                 currentRecipe = recipe
                 displayRecipeDetails(recipe)
@@ -82,12 +97,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
     }
 
     private fun displayRecipeDetails(recipe: Recipe) {
-        Glide.with(this)
-            .load(recipe.imageUrl)
-            .placeholder(R.drawable.placeholder)
-            .error(R.drawable.placeholder)
-            .into(binding.recipeImage)
-
+        Glide.with(this).load(recipe.imageUrl).placeholder(R.drawable.placeholder).error(R.drawable.placeholder).into(binding.recipeImage)
         binding.recipeTitle.text = recipe.title
         binding.recipeCategory.text = recipe.category
         binding.recipeDuration.text = recipe.duration
@@ -99,25 +109,26 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.contentLayout.visibility = View.VISIBLE
     }
 
-    private fun handleBookmark(recipe: Recipe) {
-        loader.show()
-
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
+    private fun handleBookmark() {
+        val userId = currentUserId
+        val recipe = currentRecipe
 
         if (userId == null) {
-            loader.dismiss()
             Toast.makeText(this, "Please login to bookmark this recipe", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val bookmark = BookmarkModel(
-            recipeId = recipe.id,
-            userId = userId,
-        )
+        if (recipe == null) {
+            Toast.makeText(this, "Recipe data is not available", Toast.LENGTH_SHORT).show()
+            return
+        }
 
-        bookmarkViewModel.createBookmark(bookmark) { success, message, _ ->
+        binding.bookmarkbutton.isEnabled = false
+        loader.show()
+
+        val newBookmark = BookmarkModel(recipeId = recipe.id, userId = userId)
+        bookmarkViewModel.createBookmark(newBookmark) { success, message, _ ->
             loader.dismiss()
-
             if (success) {
                 Toast.makeText(this, "Bookmark successful!", Toast.LENGTH_SHORT).show()
             } else {

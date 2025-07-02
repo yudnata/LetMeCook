@@ -32,8 +32,26 @@ class UserViewModel(private val repo: UserRepository) {
     val userData
         get() = _userData
 
+    // --- PERUBAHAN UTAMA DI SINI ---
+    // Mengubah fungsi ini agar bisa menerima callback untuk mengambil data pengguna manapun
+    fun getDataFromDatabase(userId: String, onResult: (UserModel?) -> Unit) {
+        repo.getDataFromDatabase(userId) { userModel, success, _ ->
+            if (success) {
+                // Jika ini adalah pengguna yang sedang login, perbarui LiveData
+                if (userId == repo.getCurrentUser()?.uid) {
+                    _userData.postValue(userModel)
+                }
+                // Selalu panggil callback dengan hasilnya
+                onResult(userModel)
+            } else {
+                onResult(null)
+            }
+        }
+    }
+
+    // Fungsi lama untuk menjaga kompatibilitas dengan halaman profil
     fun getDataFromDatabase(userId: String) {
-        repo.getDataFromDatabase(userId) { userModel, success, message ->
+        repo.getDataFromDatabase(userId) { userModel, success, _ ->
             if (success) {
                 _userData.value = userModel
             } else {
@@ -41,6 +59,7 @@ class UserViewModel(private val repo: UserRepository) {
             }
         }
     }
+    // --- AKHIR DARI PERUBAHAN ---
 
     fun logout(callback: (Boolean, String) -> Unit) {
         repo.logout(callback)
