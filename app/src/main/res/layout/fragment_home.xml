@@ -8,7 +8,8 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"  android:background="@color/gray_50"
+        android:layout_height="wrap_content"
+        android:background="@color/gray_50"
         android:orientation="vertical">
 
         <TextView
@@ -31,13 +32,34 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="16dp"
+            app:boxCornerRadiusBottomEnd="8dp"
+            app:boxCornerRadiusBottomStart="8dp"
+            app:boxCornerRadiusTopEnd="8dp"
+            app:boxCornerRadiusTopStart="8dp"
+            app:startIconDrawable="@drawable/ic_search_24">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search for recipes..."
+                android:inputType="text"
+                android:maxLines="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:layout_margin="16dp"
             app:cardCornerRadius="16dp"
             app:cardElevation="2dp">
-
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
@@ -82,7 +104,6 @@
             android:textColor="@color/gray_900"
             android:textSize="20sp"
             android:textStyle="bold" />
-
         <com.google.android.material.chip.ChipGroup
             android:id="@+id/categoryChipGroup"
             android:layout_width="match_parent"
@@ -113,7 +134,6 @@
                 android:text="Non-Vegetarian"
                 android:textColor="@color/black" />
         </com.google.android.material.chip.ChipGroup>
-
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,7 +143,6 @@
             android:textColor="@color/gray_900"
             android:textSize="20sp"
             android:textStyle="bold" />
-
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipesRecyclerView"
             android:layout_width="match_parent"
@@ -132,7 +151,6 @@
             android:orientation="horizontal"
             android:paddingHorizontal="8dp"
             tools:listitem="@layout/item_recipe" />
-
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
