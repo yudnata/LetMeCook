@@ -2,11 +2,15 @@ package com.example.letmecook.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -29,20 +33,24 @@ class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
     private val binding get() = _binding!!
 
+    // ViewModels and Adapter
     private val recipeViewModel: RecipeViewModel by lazy { RecipeViewModel(RecipeRepositoryImpl()) }
     private val bookmarkViewModel: BookmarkViewModel by lazy { BookmarkViewModel() }
     private val userViewModel: UserViewModel by lazy { UserViewModel(UserRepositoryImpl()) }
     private lateinit var recipeAdapter: RecipesAdapter
+
+    // Data and State
+    private var allRecipesList = listOf<Recipe>()
+    private var bookmarkList = listOf<BookmarkModel>()
     private var currentFilter = "All"
     private var currentUserId: String? = null
 
-    private var recipeList = listOf<Recipe>()
-    private var bookmarkList = listOf<BookmarkModel>()
+    // Banner Carousel
+    private val bannerHandler = Handler(Looper.getMainLooper())
+    private var bannerRunnable: Runnable? = null
+    private var currentBannerIndex = 0
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -51,31 +59,31 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid
 
-        setupBanner()
         setupRecipesList()
         setupFilterChips()
-        setupSearch() // Panggil fungsi setup untuk search
+        setupSearch()
         setupViewModelObservers()
         loadInitialData()
     }
 
-    // --- FUNGSI BARU UNTUK SETUP SEARCH ---
+    override fun onResume() {
+        super.onResume()
+        startBannerCarousel()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopBannerCarousel()
+    }
+
     private fun setupSearch() {
         binding.searchEditText.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                updateAndFilterRecipes() // Panggil fungsi filter setiap kali teks berubah
+                updateAndFilterRecipes()
             }
         })
-    }
-
-    private fun setupBanner() {
-        Glide.with(requireContext())
-            .load("https://res.cloudinary.com/dnqet3vq1/image/upload/v1740833865/Card_lxxa6l.png")
-            .into(binding.bannerImage)
-        binding.bannerTitle.text = "Asian white noodle with extra seafood"
-        binding.bannerDescription.text = "Exclusive recipe by Chef Juna!"
     }
 
     private fun setupRecipesList() {
@@ -110,76 +118,88 @@ class HomeFragment : Fragment() {
     private fun loadInitialData() {
         binding.progressBar.visibility = View.VISIBLE
         recipeViewModel.getAllRecipes()
-        currentUserId?.let {
-            bookmarkViewModel.listenForUserBookmarks(it)
-        }
+        currentUserId?.let { bookmarkViewModel.listenForUserBookmarks(it) }
     }
 
     private fun setupViewModelObservers() {
         recipeViewModel.recipeData.observe(viewLifecycleOwner, Observer { recipes ->
-            this.recipeList = recipes
+            allRecipesList = recipes
             updateAndFilterRecipes()
+            if (recipes.isNotEmpty() && bannerRunnable == null) {
+                startBannerCarousel()
+            }
         })
         bookmarkViewModel.userBookmarks.observe(viewLifecycleOwner, Observer { bookmarks ->
-            this.bookmarkList = bookmarks
+            bookmarkList = bookmarks
             updateAndFilterRecipes()
         })
     }
 
-    // --- FUNGSI FILTER DIPERBARUI UNTUK MENANGANI PENCARIAN ---
-    private fun updateAndFilterRecipes() {
-        if (view == null) return // Cek jika fragment view sudah dihancurkan
-
-        // 1. Update status bookmark
-        val bookmarkedRecipeIds = bookmarkList.map { it.recipeId }.toSet()
-        val updatedRecipes = recipeList.map { recipe ->
-            recipe.isBookmarked = bookmarkedRecipeIds.contains(recipe.id)
-            recipe
-        }
-
-        // 2. Terapkan filter kategori
-        val categorizedList = if (currentFilter == "All") {
-            updatedRecipes
-        } else {
-            updatedRecipes.filter { it.category == currentFilter }
-        }
-
-        // 3. Terapkan filter pencarian
-        val searchQuery = binding.searchEditText.text.toString()
-        val finalList = if (searchQuery.isBlank()) {
-            categorizedList
-        } else {
-            categorizedList.filter { recipe ->
-                recipe.title.contains(searchQuery, ignoreCase = true)
+    private fun startBannerCarousel() {
+        stopBannerCarousel()
+        if (allRecipesList.isNotEmpty() && isAdded) {
+            bannerRunnable = Runnable {
+                updateBannerView()
+                bannerHandler.postDelayed(bannerRunnable!!, 8000)
             }
+            bannerHandler.post(bannerRunnable!!)
         }
-
-        // 4. Update adapter dengan hasil akhir
-        fetchAuthorsAndDisplay(finalList)
     }
 
-    private fun fetchAuthorsAndDisplay(recipesToDisplay: List<Recipe>) {
-        if (view == null) return
+    private fun stopBannerCarousel() {
+        bannerRunnable?.let { bannerHandler.removeCallbacks(it) }
+        bannerRunnable = null
+    }
 
-        if (recipesToDisplay.isEmpty()) {
-            recipeAdapter.setFilteredRecipes(emptyList())
-            binding.progressBar.visibility = View.GONE
-            return
-        }
+    private fun updateBannerView() {
+        if (allRecipesList.isEmpty() || !isAdded || context == null) return
 
-        var authorFetchCount = 0
-        recipesToDisplay.forEach { recipe ->
-            userViewModel.getDataFromDatabase(recipe.creatorId) { user ->
-                recipe.creatorName = user?.fullName ?: "Unknown"
-                authorFetchCount++
-                if(authorFetchCount == recipesToDisplay.size){
-                    if (view != null) { // Cek lagi sebelum update UI
-                        recipeAdapter.setFilteredRecipes(recipesToDisplay)
-                        binding.progressBar.visibility = View.GONE
-                    }
+        val fadeOut = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_out)
+        val fadeIn = AnimationUtils.loadAnimation(requireContext(), R.anim.fade_in)
+
+        fadeOut.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationStart(animation: Animation?) {}
+            override fun onAnimationEnd(animation: Animation?) {
+                if (!isAdded) return
+
+                currentBannerIndex = (currentBannerIndex + 1) % allRecipesList.size
+                val recipe = allRecipesList[currentBannerIndex]
+
+                binding.bannerRecipeTitle.text = recipe.title
+                userViewModel.getDataFromDatabase(recipe.creatorId) { user ->
+                    if(isAdded) binding.bannerRecipeAuthor.text = "by ${user?.fullName ?: "Unknown"}"
                 }
+                Glide.with(this@HomeFragment)
+                    .load(recipe.imageUrl)
+                    .placeholder(R.drawable.recipe_preview)
+                    .into(binding.bannerRecipeImage)
+
+                binding.bannerRecipeImage.startAnimation(fadeIn)
+                binding.bannerRecipeTitle.startAnimation(fadeIn)
+                binding.bannerRecipeAuthor.startAnimation(fadeIn)
             }
+            override fun onAnimationRepeat(animation: Animation?) {}
+        })
+
+        binding.bannerRecipeImage.startAnimation(fadeOut)
+        binding.bannerRecipeTitle.startAnimation(fadeOut)
+        binding.bannerRecipeAuthor.startAnimation(fadeOut)
+    }
+
+    private fun updateAndFilterRecipes() {
+        if (!isAdded) return
+
+        val bookmarkedRecipeIds = bookmarkList.map { it.recipeId }.toSet()
+        val updatedRecipes = allRecipesList.map { recipe ->
+            recipe.copy(isBookmarked = bookmarkedRecipeIds.contains(recipe.id))
         }
+
+        val categorizedList = if (currentFilter == "All") updatedRecipes else updatedRecipes.filter { it.category == currentFilter }
+        val searchQuery = binding.searchEditText.text.toString()
+        val finalList = if (searchQuery.isBlank()) categorizedList else categorizedList.filter { it.title.contains(searchQuery, ignoreCase = true) }
+
+        recipeAdapter.updateRecipes(finalList)
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun navigateToRecipeDetail(recipe: Recipe) {
@@ -197,16 +217,17 @@ class HomeFragment : Fragment() {
         recipeAdapter.notifyDataSetChanged()
         val bookmark = BookmarkModel(recipeId = recipe.id, userId = currentUserId!!)
         bookmarkViewModel.createBookmark(bookmark) { success, message, _ ->
-            if (!success) {
-                Toast.makeText(context, "Bookmark failed: $message", Toast.LENGTH_SHORT).show()
-            } else {
+            if (success) {
                 Toast.makeText(context, "Recipe Saved!", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(context, "Bookmark failed: $message", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        stopBannerCarousel()
         _binding = null
     }
 }

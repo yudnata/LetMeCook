@@ -52,8 +52,8 @@
                 android:hint="Search for recipes..."
                 android:inputType="text"
                 android:maxLines="1" />
-
         </com.google.android.material.textfield.TextInputLayout>
+
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="240dp"
@@ -64,10 +64,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <ImageView
-                    android:id="@+id/bannerImage"
+                    android:id="@+id/bannerRecipeImage"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:scaleType="centerCrop" />
+                    android:scaleType="centerCrop"
+                    tools:src="@drawable/recipe_preview"/>
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -79,19 +80,21 @@
                     android:orientation="vertical"
                     android:padding="20dp">
                     <TextView
-                        android:id="@+id/bannerTitle"
+                        android:id="@+id/bannerRecipeTitle"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:textSize="24sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        tools:text="Recipe Title Goes Here" />
                     <TextView
-                        android:id="@+id/bannerDescription"
+                        android:id="@+id/bannerRecipeAuthor"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="4dp"
                         android:textColor="@color/gray_200"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="by Chef Name"/>
                 </LinearLayout>
             </FrameLayout>
         </androidx.cardview.widget.CardView>
