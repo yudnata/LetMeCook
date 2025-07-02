@@ -3,6 +3,7 @@ package com.example.letmecook.ui.activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
@@ -38,6 +39,23 @@ class EditRecipeActivity : AppCompatActivity() {
         loader = LoadingUtils(this)
         imageUtils = ImageUtils(this)
         recipeViewModel = RecipeViewModel(RecipeRepositoryImpl())
+
+        // --- AWAL DARI KODE BARU UNTUK SCROLL OTOMATIS ---
+        val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                binding.main.postDelayed({
+                    binding.main.smoothScrollTo(0, view.bottom)
+                }, 200)
+            }
+        }
+        binding.recipeTitle.onFocusChangeListener = focusChangeListener
+        binding.recipeDesc.onFocusChangeListener = focusChangeListener
+        binding.recipeProcess.onFocusChangeListener = focusChangeListener
+        binding.recipeDuration.onFocusChangeListener = focusChangeListener
+        binding.recipeCarbs.onFocusChangeListener = focusChangeListener
+        binding.recipeProteins.onFocusChangeListener = focusChangeListener
+        binding.recipeFats.onFocusChangeListener = focusChangeListener
+        // --- AKHIR DARI KODE BARU UNTUK SCROLL OTOMATIS ---
 
         recipeId = intent.getStringExtra("RECIPE_ID")
         val title = intent.getStringExtra("RECIPE_TITLE") ?: ""
@@ -87,10 +105,15 @@ class EditRecipeActivity : AppCompatActivity() {
             handleUpdateRecipe()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val targetPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
+            WindowInsetsCompat.Builder(insets).setInsets(
+                WindowInsetsCompat.Type.ime(),
+                androidx.core.graphics.Insets.of(0, 0, 0, 0)
+            ).build()
         }
     }
 
@@ -130,16 +153,17 @@ class EditRecipeActivity : AppCompatActivity() {
         }
 
         // Build a data map for partial update
-        val data = mutableMapOf<String, Any>()
-        data["title"] = newTitle
-        data["description"] = newDescription
-        data["process"] = newProcess
-        data["duration"] = newDuration
-        data["carbs"] = newCarbs
-        data["proteins"] = newProteins
-        data["fats"] = newFats
-        data["category"] = newCategory
-        data["imageUrl"] = imageUrl
+        val data = mutableMapOf<String, Any>(
+            "title" to newTitle,
+            "description" to newDescription,
+            "process" to newProcess,
+            "duration" to newDuration,
+            "carbs" to newCarbs,
+            "proteins" to newProteins,
+            "fats" to newFats,
+            "category" to newCategory,
+            "imageUrl" to imageUrl
+        )
 
         recipeViewModel.updateRecipe(recipeId!!, data) { success, message ->
             loader.dismiss()

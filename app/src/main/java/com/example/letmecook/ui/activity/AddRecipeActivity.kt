@@ -3,6 +3,7 @@ package com.example.letmecook.ui.activity
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -40,6 +41,23 @@ class AddRecipeActivity : AppCompatActivity() {
         val recipeRepository = RecipeRepositoryImpl()
         recipeViewModel = RecipeViewModel(recipeRepository)
 
+        // --- AWAL DARI KODE BARU UNTUK SCROLL OTOMATIS ---
+        val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+            if (hasFocus) {
+                binding.main.postDelayed({
+                    binding.main.smoothScrollTo(0, view.bottom)
+                }, 200)
+            }
+        }
+        binding.recipeTitle.onFocusChangeListener = focusChangeListener
+        binding.recipeDesc.onFocusChangeListener = focusChangeListener
+        binding.recipeProcess.onFocusChangeListener = focusChangeListener
+        binding.recipeDuration.onFocusChangeListener = focusChangeListener
+        binding.recipeCarbs.onFocusChangeListener = focusChangeListener
+        binding.recipeProteins.onFocusChangeListener = focusChangeListener
+        binding.recipeFats.onFocusChangeListener = focusChangeListener
+        // --- AKHIR DARI KODE BARU UNTUK SCROLL OTOMATIS ---
+
         imageUtils.registerActivity { uri ->
             uri?.let {
                 imageUri = it
@@ -55,10 +73,15 @@ class AddRecipeActivity : AppCompatActivity() {
             handleCreateRecipe()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+            val targetPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
+            WindowInsetsCompat.Builder(insets).setInsets(
+                WindowInsetsCompat.Type.ime(),
+                androidx.core.graphics.Insets.of(0, 0, 0, 0)
+            ).build()
         }
     }
 
@@ -66,7 +89,7 @@ class AddRecipeActivity : AppCompatActivity() {
         loader.show()
         if (imageUri != null) {
             recipeViewModel.uploadRecipeImage(this, imageUri!!) { imageUrl ->
-                Log.d("AddEventActivity", "Image URL: $imageUrl")
+                Log.d("AddRecipeActivity", "Image URL: $imageUrl")
                 createRecipe(imageUrl ?: "")
             }
         } else {

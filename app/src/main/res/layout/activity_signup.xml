@@ -178,16 +178,6 @@
                 tools:layout_editor_absoluteX="35dp"
                 tools:layout_editor_absoluteY="669dp" />
 
-            <RadioButton
-                android:id="@+id/othersRadio"
-                android:layout_width="99dp"
-                android:layout_height="wrap_content"
-                android:buttonTintMode="multiply"
-                android:text="Others"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText"
-                tools:layout_editor_absoluteX="136dp"
-                tools:layout_editor_absoluteY="669dp" />
         </RadioGroup>
 
         <TextView

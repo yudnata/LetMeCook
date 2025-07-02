@@ -92,10 +92,25 @@ class SignupActivity : AppCompatActivity() {
             startActivity(Intent(this@SignupActivity, LoginActivity::class.java))
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        // --- KODE YANG DIPERBAIKI ---
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
+
+            // Menyesuaikan padding bawah untuk memberi ruang bagi keyboard
+            val targetPadding = if (ime.bottom > 0) {
+                ime.bottom
+            } else {
+                systemBars.bottom
+            }
+
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
+
+            // Mengembalikan insets yang tidak dipakai (agar sistem bisa menanganinya)
+            WindowInsetsCompat.Builder(insets).setInsets(
+                WindowInsetsCompat.Type.ime(),
+                androidx.core.graphics.Insets.of(0, 0, 0, 0)
+            ).build()
         }
     }
 
