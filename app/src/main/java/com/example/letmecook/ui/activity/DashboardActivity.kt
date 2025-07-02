@@ -1,10 +1,12 @@
 package com.example.letmecook.ui.activity
 
 import android.os.Bundle
+import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updateLayoutParams
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import com.example.letmecook.R
@@ -18,7 +20,6 @@ class DashboardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityDashboardBinding
     private val fragmentManager: FragmentManager = supportFragmentManager
 
-    // Buat instance untuk setiap fragment sekali saja
     private val homeFragment: Fragment = HomeFragment()
     private val bookmarksFragment: Fragment = BookmarksFragment()
     private val recipesFragment: Fragment = RecipesFragment()
@@ -28,10 +29,30 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // Mengaktifkan mode Edge-to-Edge
         enableEdgeToEdge()
 
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // --- INI ADALAH KODE PERBAIKANNYA ---
+        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Menerapkan padding atas untuk status bar
+            view.setPadding(0, insets.top, 0, 0)
+
+            // Menerapkan padding bawah sebagai margin untuk BottomNavigationView
+            // Ini akan mendorong menu navigasi ke atas, tepat di atas 3-button navigation bar
+            binding.bottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
+                bottomMargin = insets.bottom
+            }
+
+            // Mengembalikan insets yang tidak dipakai
+            WindowInsetsCompat.CONSUMED
+        }
+        // --- AKHIR DARI KODE PERBAIKAN ---
 
         setupFragments()
 
@@ -44,17 +65,10 @@ class DashboardActivity : AppCompatActivity() {
             }
             true
         }
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
     }
 
     private fun setupFragments() {
         val transaction = fragmentManager.beginTransaction()
-        // Tambahkan semua fragment tapi sembunyikan yang tidak aktif
         transaction.add(R.id.mainFrame, profileFragment, "4").hide(profileFragment)
         transaction.add(R.id.mainFrame, recipesFragment, "3").hide(recipesFragment)
         transaction.add(R.id.mainFrame, bookmarksFragment, "2").hide(bookmarksFragment)
