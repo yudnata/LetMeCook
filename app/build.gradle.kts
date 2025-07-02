@@ -20,7 +20,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
     }
 
     buildTypes {
@@ -59,8 +58,11 @@ dependencies {
     implementation("com.airbnb.android:lottie:6.6.2")
     testImplementation("org.mockito:mockito-core:5.6.0")
     testImplementation("org.mockito:mockito-inline:3.12.4")
-    androidTestImplementation("org.mockito:mockito-kotlin:3.2.0")
-    androidTestImplementation(libs.androidx.espresso.core)
+
+    // --- BARIS YANG DIPERBAIKI ---
+    // Mengganti mockito-kotlin yang lama dengan yang baru
+    androidTestImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
+
     androidTestImplementation("androidx.test:runner:1.2.0")
     androidTestImplementation("androidx.test:rules:1.2.0")
 }
