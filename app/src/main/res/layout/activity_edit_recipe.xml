@@ -75,9 +75,9 @@
             android:layout_marginEnd="36dp"
             android:background="@drawable/input_shape"
             android:ems="10"
-            android:inputType="textEmailAddress"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
+            android:inputType="textMultiLine"
+            android:gravity="top"
+            android:padding="14dp"
             android:textColor="@color/primary_text"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -95,23 +95,27 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recipeDesc" />
 
-        <EditText
-            android:id="@+id/recipeProcess"
+        <LinearLayout
+            android:id="@+id/stepsContainer"
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
             android:layout_marginEnd="36dp"
-            android:background="@drawable/input_shape"
-            android:ems="10"
-            android:inputType="textEmailAddress"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="4dp"
+            app:layout_constraintTop_toBottomOf="@id/textView44"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView44" />
+            app:layout_constraintEnd_toEndOf="parent"/>
+
+        <Button
+            android:id="@+id/addStepButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="+ Add Step"
+            android:textAllCaps="false"
+            app:layout_constraintStart_toStartOf="@id/stepsContainer"
+            app:layout_constraintTop_toBottomOf="@id/stepsContainer" />
 
         <TextView
             android:id="@+id/textView5"
@@ -122,7 +126,7 @@
             android:text="Recipe Duration"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipeProcess" />
+            app:layout_constraintTop_toBottomOf="@+id/addStepButton" />
 
         <EditText
             android:id="@+id/recipeDuration"
@@ -314,7 +318,6 @@
             android:layout_marginStart="36dp"
             android:layout_marginTop="16dp"
             android:layout_marginEnd="36dp"
-            android:layout_marginBottom="16dp"
             android:backgroundTint="@color/primary"
             android:text="Save Changes"
             android:textSize="16sp"
@@ -322,5 +325,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/selectHalalStatus" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

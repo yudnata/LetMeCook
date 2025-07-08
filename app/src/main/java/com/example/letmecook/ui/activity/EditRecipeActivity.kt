@@ -1,15 +1,19 @@
 package com.example.letmecook.ui.activity
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.ArrayAdapter
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import com.example.letmecook.R
 import com.example.letmecook.databinding.ActivityEditRecipeBinding
 import com.example.letmecook.repository.RecipeRepositoryImpl
@@ -49,7 +53,6 @@ class EditRecipeActivity : AppCompatActivity() {
         }
         binding.recipeTitle.onFocusChangeListener = focusChangeListener
         binding.recipeDesc.onFocusChangeListener = focusChangeListener
-        binding.recipeProcess.onFocusChangeListener = focusChangeListener
         binding.recipeDuration.onFocusChangeListener = focusChangeListener
         binding.recipeCarbs.onFocusChangeListener = focusChangeListener
         binding.recipeProteins.onFocusChangeListener = focusChangeListener
@@ -70,7 +73,6 @@ class EditRecipeActivity : AppCompatActivity() {
 
         binding.recipeTitle.setText(title)
         binding.recipeDesc.setText(description)
-        binding.recipeProcess.setText(process)
         binding.recipeDuration.setText(duration)
         binding.recipeCarbs.setText(carbs)
         binding.recipeProteins.setText(proteins)
@@ -78,6 +80,16 @@ class EditRecipeActivity : AppCompatActivity() {
 
         if (!currentImageUrl.isNullOrEmpty()) {
             Picasso.get().load(currentImageUrl).into(binding.imageBrowse)
+        }
+
+        // Populate steps
+        val steps = process.split("\n").filter { it.isNotBlank() }
+        if (steps.isNotEmpty()) {
+            for (step in steps) {
+                addStepView(step)
+            }
+        } else {
+            addStepView() // Add one empty step if there are none
         }
 
         val categorySpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_categories, android.R.layout.simple_spinner_dropdown_item)
@@ -108,6 +120,10 @@ class EditRecipeActivity : AppCompatActivity() {
             imageUtils.launchGallery(this)
         }
 
+        binding.addStepButton.setOnClickListener {
+            addStepView()
+        }
+
         binding.editRecipeBtn.setOnClickListener {
             handleUpdateRecipe()
         }
@@ -122,6 +138,30 @@ class EditRecipeActivity : AppCompatActivity() {
                 androidx.core.graphics.Insets.of(0, 0, 0, 0)
             ).build()
         }
+    }
+
+    private fun addStepView(text: String? = null) {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val stepView = inflater.inflate(R.layout.item_step_input, null)
+
+        val editText = stepView.findViewById<EditText>(R.id.editStepText)
+        text?.let {
+            editText.setText(it)
+        }
+
+        val deleteButton = stepView.findViewById<View>(R.id.deleteStepButton)
+        deleteButton.setOnClickListener {
+            binding.stepsContainer.removeView(stepView)
+        }
+
+        binding.stepsContainer.addView(stepView)
+    }
+
+    private fun getStepsAsString(): String {
+        return binding.stepsContainer.children
+            .map { it.findViewById<EditText>(R.id.editStepText).text.toString().trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
     }
 
     private fun handleUpdateRecipe() {
@@ -145,7 +185,7 @@ class EditRecipeActivity : AppCompatActivity() {
     private fun updateRecipeInFirebase(imageUrl: String) {
         val newTitle = binding.recipeTitle.text.toString().trim()
         val newDescription = binding.recipeDesc.text.toString().trim()
-        val newProcess = binding.recipeProcess.text.toString().trim()
+        val newProcess = getStepsAsString() // Ambil dari dynamic views
         val newDuration = binding.recipeDuration.text.toString().trim()
         val newCarbs = binding.recipeCarbs.text.toString().trim()
         val newProteins = binding.recipeProteins.text.toString().trim()

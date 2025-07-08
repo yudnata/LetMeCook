@@ -1,14 +1,18 @@
 package com.example.letmecook.ui.activity
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.children
 import com.example.letmecook.R
 import com.example.letmecook.databinding.ActivityAddRecipeBinding
 import com.example.letmecook.model.Recipe
@@ -50,7 +54,6 @@ class AddRecipeActivity : AppCompatActivity() {
         }
         binding.recipeTitle.onFocusChangeListener = focusChangeListener
         binding.recipeDesc.onFocusChangeListener = focusChangeListener
-        binding.recipeProcess.onFocusChangeListener = focusChangeListener
         binding.recipeDuration.onFocusChangeListener = focusChangeListener
         binding.recipeCarbs.onFocusChangeListener = focusChangeListener
         binding.recipeProteins.onFocusChangeListener = focusChangeListener
@@ -66,6 +69,13 @@ class AddRecipeActivity : AppCompatActivity() {
         binding.imageBrowse.setOnClickListener {
             imageUtils.launchGallery(this)
         }
+
+        binding.addStepButton.setOnClickListener {
+            addStepView()
+        }
+
+        // Tambahkan satu langkah awal saat activity dibuat
+        addStepView()
 
         binding.addRecipeBtn.setOnClickListener {
             handleCreateRecipe()
@@ -83,6 +93,26 @@ class AddRecipeActivity : AppCompatActivity() {
         }
     }
 
+    private fun addStepView() {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val stepView = inflater.inflate(R.layout.item_step_input, null)
+
+        val deleteButton = stepView.findViewById<View>(R.id.deleteStepButton)
+        deleteButton.setOnClickListener {
+            // Hapus view langkah ini dari container
+            binding.stepsContainer.removeView(stepView)
+        }
+
+        binding.stepsContainer.addView(stepView)
+    }
+
+    private fun getStepsAsString(): String {
+        return binding.stepsContainer.children
+            .map { it.findViewById<EditText>(R.id.editStepText).text.toString().trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
+    }
+
     private fun handleCreateRecipe() {
         loader.show()
         if (imageUri != null) {
@@ -98,7 +128,7 @@ class AddRecipeActivity : AppCompatActivity() {
     private fun createRecipe(imageUrl: String) {
         val title = binding.recipeTitle.text.toString().trim()
         val description = binding.recipeDesc.text.toString().trim()
-        val process = binding.recipeProcess.text.toString().trim()
+        val process = getStepsAsString() // Ambil langkah dari dynamic views
         val duration = binding.recipeDuration.text.toString().trim()
         val carbs = binding.recipeCarbs.text.toString().trim()
         val proteins = binding.recipeProteins.text.toString().trim()
