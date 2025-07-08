@@ -1,5 +1,6 @@
 package com.example.letmecook.ui.fragment
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -66,6 +67,17 @@ class HomeFragment : Fragment() {
         setupViewModelObservers()
         loadInitialData()
         setupSeeAllButton()
+        loadUserData() // Panggil fungsi untuk memuat data pengguna
+    }
+
+    private fun loadUserData() {
+        currentUserId?.let { uid ->
+            userViewModel.getDataFromDatabase(uid) { user ->
+                user?.let {
+                    binding.greetingText.text = "Hello, ${it.fullName}!"
+                }
+            }
+        }
     }
 
     private fun setupSeeAllButton() {
@@ -143,6 +155,7 @@ class HomeFragment : Fragment() {
         currentUserId?.let { bookmarkViewModel.listenForUserBookmarks(it) }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun setupViewModelObservers() {
         recipeViewModel.recipeData.observe(viewLifecycleOwner, Observer { recipes ->
             allRecipesList = recipes
@@ -181,6 +194,7 @@ class HomeFragment : Fragment() {
 
         fadeOut.setAnimationListener(object : Animation.AnimationListener {
             override fun onAnimationStart(animation: Animation?) {}
+            @SuppressLint("SetTextI18n")
             override fun onAnimationEnd(animation: Animation?) {
                 if (!isAdded) return
 
