@@ -21,7 +21,6 @@ class CommentViewModel(private val repository: CommentRepository = CommentReposi
             if (success) {
                 _comments.postValue(commentList)
             } else {
-                // Handle error case if needed
             }
         }
     }
@@ -30,7 +29,7 @@ class CommentViewModel(private val repository: CommentRepository = CommentReposi
         repository.deleteComment(commentId, callback)
     }
 
-    fun updateComment(commentId: String, newCommentText: String, callback: (Boolean, String) -> Unit) {
-        repository.updateComment(commentId, newCommentText, callback)
+    fun updateComment(commentId: String, newCommentText: String, newRating: Float, callback: (Boolean, String) -> Unit) {
+        repository.updateComment(commentId, newCommentText, newRating, callback)
     }
 }

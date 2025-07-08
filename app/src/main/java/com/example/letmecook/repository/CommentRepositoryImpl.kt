@@ -77,11 +77,12 @@ class CommentRepositoryImpl : CommentRepository {
         }
     }
 
-    override fun updateComment(commentId: String, newCommentText: String, callback: (Boolean, String) -> Unit) {
+    override fun updateComment(commentId: String, newCommentText: String, newRating: Float, callback: (Boolean, String) -> Unit) {
         val updateData = mapOf(
             "comment" to newCommentText,
+            "rating" to newRating, // Tambahkan rating baru
             "edited" to true,
-            "updateTimestamp" to System.currentTimeMillis() // Menambahkan timestamp baru saat update
+            "updateTimestamp" to System.currentTimeMillis()
         )
         reference.child(commentId).updateChildren(updateData).addOnCompleteListener { task ->
             if (task.isSuccessful) {

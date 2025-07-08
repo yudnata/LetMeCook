@@ -4,12 +4,15 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
+import android.widget.RatingBar
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.letmecook.R
 import com.example.letmecook.adapter.CommentAdapter
 import com.example.letmecook.databinding.DialogEditCommentBinding
 import com.example.letmecook.databinding.FragmentRecipeReviewsBinding
@@ -146,24 +149,31 @@ class RecipeReviewsFragment : Fragment() {
     }
 
     private fun handleCommentEditing(comment: CommentModel) {
-        val dialogBinding = DialogEditCommentBinding.inflate(LayoutInflater.from(requireContext()))
-        dialogBinding.editCommentEditText.setText(comment.comment)
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_edit_comment, null)
+        val editText = dialogView.findViewById<EditText>(R.id.editCommentEditText)
+        val ratingBar = dialogView.findViewById<RatingBar>(R.id.editCommentRatingBar)
+
+        editText.setText(comment.comment)
+        ratingBar.rating = comment.rating
 
         AlertDialog.Builder(requireContext())
-            .setTitle("Edit Comment")
-            .setView(dialogBinding.root)
+            .setTitle("Edit Review")
+            .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
-                val newCommentText = dialogBinding.editCommentEditText.text.toString().trim()
+                val newCommentText = editText.text.toString().trim()
+                val newRating = ratingBar.rating
                 if (newCommentText.isNotEmpty()) {
                     loader.show()
-                    commentViewModel.updateComment(comment.id, newCommentText) { success, message ->
+                    commentViewModel.updateComment(comment.id, newCommentText, newRating) { success, message ->
                         loader.dismiss()
                         if (success) {
-                            Toast.makeText(requireContext(), "Comment updated successfully", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Review updated successfully", Toast.LENGTH_SHORT).show()
                         } else {
-                            Toast.makeText(requireContext(), "Failed to update comment: $message", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(requireContext(), "Failed to update review: $message", Toast.LENGTH_SHORT).show()
                         }
                     }
+                } else {
+                    Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel", null)
