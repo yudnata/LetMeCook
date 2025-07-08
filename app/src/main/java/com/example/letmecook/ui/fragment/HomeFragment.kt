@@ -230,7 +230,10 @@ class HomeFragment : Fragment() {
             recipe.copy(isBookmarked = bookmarkedRecipeIds.contains(recipe.id))
         }
 
-        val categorizedList = if (currentFilter == "All") updatedRecipes else updatedRecipes.filter { it.category == currentFilter }
+        // --- PERUBAHAN DI SINI ---
+        val sortedByRating = updatedRecipes.sortedByDescending { it.averageRating }
+
+        val categorizedList = if (currentFilter == "All") sortedByRating else sortedByRating.filter { it.category == currentFilter }
         val searchQuery = binding.searchEditText.text.toString()
         val finalList = if (searchQuery.isBlank()) categorizedList else categorizedList.filter { it.title.contains(searchQuery, ignoreCase = true) }
 

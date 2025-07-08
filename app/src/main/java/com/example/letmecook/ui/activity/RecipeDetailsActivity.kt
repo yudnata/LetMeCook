@@ -117,7 +117,21 @@ class RecipeDetailsActivity : AppCompatActivity() {
         commentViewModel.comments.observe(this, Observer { comments ->
             commentAdapter.updateComments(comments)
             updateRating(comments)
+
+            // --- PERUBAHAN UTAMA DI SINI ---
+            // Periksa apakah pengguna saat ini sudah berkomentar
+            val userHasCommented = comments.any { it.userId == currentUserId }
+            updateCommentSectionVisibility(userHasCommented)
         })
+    }
+
+    // --- FUNGSI BARU ---
+    private fun updateCommentSectionVisibility(hasCommented: Boolean) {
+        if (hasCommented) {
+            binding.addCommentSection.visibility = View.GONE
+        } else {
+            binding.addCommentSection.visibility = View.VISIBLE
+        }
     }
 
     private fun loadRecipeDetails() {
