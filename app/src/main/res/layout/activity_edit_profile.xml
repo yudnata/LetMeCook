@@ -1,194 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_100"
+    android:fitsSystemWindows="true"
     tools:context=".ui.activity.EditProfileActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:theme="@style/Theme.AppCompat.Light">
 
-        <ImageView
-            android:id="@+id/imageBrowse"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginStart="174dp"
-            android:layout_marginTop="24dp"
-            android:src="@drawable/upload"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="38dp"
-            android:layout_marginTop="8dp"
-            android:text="Full Name"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/imageBrowse" />
-
-        <EditText
-            android:id="@+id/editFullName"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/input_shape"
-            android:ems="10"
-            android:hint="Yudhi Adinata"
-            android:inputType="text"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView2" />
+            android:layout_height="?attr/actionBarSize"
+            app:navigationIcon="@drawable/baseline_arrow_back_24"
+            app:title="Edit Profile"
+            app:titleTextColor="@color/primary_text" />
 
-        <TextView
-            android:id="@+id/textView4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="38dp"
-            android:layout_marginTop="12dp"
-            android:text="Email Address"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editFullName" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-        <EditText
-            android:id="@+id/editEmail"
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/input_shape"
-            android:ems="10"
-            android:hint="yudhinata04@gmail.com"
-            android:inputType="textEmailAddress"
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textColor="@color/primary_text"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-        <TextView
-            android:id="@+id/textView6"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="12dp"
-            android:text="Gender"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/editEmail" />
+            android:paddingBottom="24dp">
 
-        <RadioGroup
-            android:id="@+id/genderSelect"
-            android:layout_width="340dp"
-            android:layout_height="41dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="4dp"
-            android:orientation="horizontal"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView6">
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageBrowse"
+                android:layout_width="128dp"
+                android:layout_height="128dp"
+                android:layout_marginTop="24dp"
+                android:src="@drawable/upload"
+                app:civ_border_color="@color/gray_300"
+                app:civ_border_width="2dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <RadioButton
-                android:id="@+id/maleRadio"
-                android:layout_width="86dp"
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTintMode="multiply"
-                android:checked="true"
-                android:text="Male"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText" />
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="24dp"
+                android:text="Full Name"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageBrowse" />
 
-            <RadioButton
-                android:id="@+id/femaleRadio"
-                android:layout_width="97dp"
+            <EditText
+                android:id="@+id/editFullName"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/input_shape"
+                android:ems="10"
+                android:hint="Yudhi Adinata"
+                android:inputType="text"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView2" />
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:buttonTintMode="multiply"
-                android:text="Female"
-                android:textSize="14sp"
-                tools:ignore="HardcodedText" />
-        </RadioGroup>
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="12dp"
+                android:text="Email Address"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editFullName" />
 
-        <TextView
-            android:id="@+id/textView7"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="12dp"
-            android:text="Country"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/genderSelect" />
+            <EditText
+                android:id="@+id/editEmail"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/input_shape"
+                android:ems="10"
+                android:hint="yudhinata04@gmail.com"
+                android:inputType="textEmailAddress"
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textColor="@color/primary_text"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
-        <Spinner
-            android:id="@+id/selectCountry"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/input_shape"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView7" />
+            <TextView
+                android:id="@+id/textView6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="12dp"
+                android:text="Gender"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/editEmail" />
 
-        <TextView
-            android:id="@+id/textView8"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="35dp"
-            android:layout_marginTop="12dp"
-            android:text="City"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectCountry" />
+            <RadioGroup
+                android:id="@+id/genderSelect"
+                android:layout_width="340dp"
+                android:layout_height="41dp"
+                android:layout_gravity="center"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="4dp"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6">
 
-        <AutoCompleteTextView
-            android:id="@+id/autoCompleteCity"
-            android:layout_width="match_parent"
-            android:layout_height="44dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginEnd="36dp"
-            android:background="@drawable/input_shape"
-            android:hint="Search City..."
-            android:paddingStart="14dp"
-            android:paddingEnd="14dp"
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView8" />
+                <RadioButton
+                    android:id="@+id/maleRadio"
+                    android:layout_width="86dp"
+                    android:layout_height="wrap_content"
+                    android:buttonTintMode="multiply"
+                    android:checked="true"
+                    android:text="Male"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
 
-        <Button
-            android:id="@+id/saveBtn"
-            android:layout_width="match_parent"
-            android:layout_height="54dp"
-            android:layout_marginStart="36dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="36dp"
-            android:backgroundTint="@color/primary"
-            android:text="Save Changes"
-            android:textSize="16sp"
-            app:cornerRadius="8dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/autoCompleteCity" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</ScrollView>
+                <RadioButton
+                    android:id="@+id/femaleRadio"
+                    android:layout_width="97dp"
+                    android:layout_height="wrap_content"
+                    android:buttonTintMode="multiply"
+                    android:text="Female"
+                    android:textSize="14sp"
+                    tools:ignore="HardcodedText" />
+            </RadioGroup>
+
+            <TextView
+                android:id="@+id/textView7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="12dp"
+                android:text="Country"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/genderSelect" />
+
+            <Spinner
+                android:id="@+id/selectCountry"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/input_shape"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView7" />
+
+            <TextView
+                android:id="@+id/textView8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="35dp"
+                android:layout_marginTop="12dp"
+                android:text="City"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectCountry" />
+
+            <AutoCompleteTextView
+                android:id="@+id/autoCompleteCity"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="36dp"
+                android:background="@drawable/input_shape"
+                android:hint="Search City..."
+                android:paddingStart="14dp"
+                android:paddingEnd="14dp"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView8" />
+
+            <Button
+                android:id="@+id/saveBtn"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="24dp"
+                android:layout_marginEnd="36dp"
+                android:backgroundTint="@color/primary"
+                android:text="Save Changes"
+                android:textSize="16sp"
+                app:cornerRadius="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/autoCompleteCity" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

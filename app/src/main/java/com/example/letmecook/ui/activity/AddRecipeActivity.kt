@@ -40,24 +40,18 @@ class AddRecipeActivity : AppCompatActivity() {
         binding = ActivityAddRecipeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
+
         loader = LoadingUtils(this)
         imageUtils = ImageUtils(this)
         val recipeRepository = RecipeRepositoryImpl()
         recipeViewModel = RecipeViewModel(recipeRepository)
-
-        val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                binding.main.postDelayed({
-                    binding.main.smoothScrollTo(0, view.bottom)
-                }, 200)
-            }
-        }
-        binding.recipeTitle.onFocusChangeListener = focusChangeListener
-        binding.recipeDesc.onFocusChangeListener = focusChangeListener
-        binding.recipeDuration.onFocusChangeListener = focusChangeListener
-        binding.recipeCarbs.onFocusChangeListener = focusChangeListener
-        binding.recipeProteins.onFocusChangeListener = focusChangeListener
-        binding.recipeFats.onFocusChangeListener = focusChangeListener
 
         imageUtils.registerActivity { uri ->
             uri?.let {
@@ -74,22 +68,10 @@ class AddRecipeActivity : AppCompatActivity() {
             addStepView()
         }
 
-        // Tambahkan satu langkah awal saat activity dibuat
         addStepView()
 
         binding.addRecipeBtn.setOnClickListener {
             handleCreateRecipe()
-        }
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val targetPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
-            WindowInsetsCompat.Builder(insets).setInsets(
-                WindowInsetsCompat.Type.ime(),
-                androidx.core.graphics.Insets.of(0, 0, 0, 0)
-            ).build()
         }
     }
 
@@ -99,7 +81,6 @@ class AddRecipeActivity : AppCompatActivity() {
 
         val deleteButton = stepView.findViewById<View>(R.id.deleteStepButton)
         deleteButton.setOnClickListener {
-            // Hapus view langkah ini dari container
             binding.stepsContainer.removeView(stepView)
         }
 
@@ -128,7 +109,7 @@ class AddRecipeActivity : AppCompatActivity() {
     private fun createRecipe(imageUrl: String) {
         val title = binding.recipeTitle.text.toString().trim()
         val description = binding.recipeDesc.text.toString().trim()
-        val process = getStepsAsString() // Ambil langkah dari dynamic views
+        val process = getStepsAsString()
         val duration = binding.recipeDuration.text.toString().trim()
         val carbs = binding.recipeCarbs.text.toString().trim()
         val proteins = binding.recipeProteins.text.toString().trim()

@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/white"
     app:cardCornerRadius="12dp"
     app:cardElevation="4dp">
 
@@ -13,13 +14,15 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/imgRecipe"
             android:layout_width="82dp"
             android:layout_height="82dp"
             android:contentDescription="Recipe Image"
             android:scaleType="centerCrop"
-            android:src="@drawable/recipe_preview"
+            android:src="@drawable/placeholder_image"
+            app:civ_border_color="@color/gray_200"
+            app:civ_border_width="1dp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -57,9 +60,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:orientation="vertical"
-            app:layout_constraintTop_toBottomOf="@id/recipeName"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="@id/recipeName"
-            app:layout_constraintEnd_toEndOf="parent">
+            app:layout_constraintTop_toBottomOf="@id/recipeName">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -71,12 +74,13 @@
                     android:layout_height="20dp"
                     android:src="@drawable/proteins"
                     app:tint="@color/gray_500" />
+
                 <TextView
                     android:id="@+id/recipeProtein"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:textColor="@color/secondary_text"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -87,12 +91,13 @@
                     android:layout_height="20dp"
                     android:src="@drawable/fats"
                     app:tint="@color/gray_500" />
+
                 <TextView
                     android:id="@+id/recipeCarbs"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
+                    android:layout_weight="1"
                     android:textColor="@color/secondary_text"
                     android:textSize="14sp"
                     android:textStyle="bold"
@@ -105,11 +110,13 @@
                 android:layout_marginTop="4dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
+
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:src="@drawable/time"
                     app:tint="@color/gray_500" />
+
                 <TextView
                     android:id="@+id/recipeDuration"
                     android:layout_width="wrap_content"
@@ -128,10 +135,10 @@
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:text="Delete"
             android:textAllCaps="false"
             android:textColor="@color/colorError"
-            android:layout_marginTop="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/details_container" />
 

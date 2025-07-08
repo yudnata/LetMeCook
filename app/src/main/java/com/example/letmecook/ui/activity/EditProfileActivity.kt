@@ -31,6 +31,14 @@ class EditProfileActivity : AppCompatActivity() {
         binding = ActivityEditProfileBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowTitleEnabled(true) // Pastikan judul terlihat
+
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         val countriesAdapter = CountriesAdapter(this)
         val citiesAdapter = CitiesAdapter(this)
 
@@ -69,16 +77,14 @@ class EditProfileActivity : AppCompatActivity() {
                     binding.selectCountry.setSelection(countryIndex)
                     binding.autoCompleteCity.setText(it.city)
 
-                    // --- UBAH BAGIAN INI ---
                     if (!it.imageUrl.isNullOrEmpty()) {
                         Picasso.get()
                             .load(it.imageUrl)
-                            .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
+                            .placeholder(R.drawable.placeholder_image)
                             .into(binding.imageBrowse)
                     } else {
-                        binding.imageBrowse.setImageResource(R.drawable.placeholder_image) // Gunakan placeholder baru
+                        binding.imageBrowse.setImageResource(R.drawable.placeholder_image)
                     }
-                    // --- AKHIR PERUBAHAN ---
                 }
             }
         }

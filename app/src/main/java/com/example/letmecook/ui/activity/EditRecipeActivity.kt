@@ -40,23 +40,16 @@ class EditRecipeActivity : AppCompatActivity() {
         binding = ActivityEditRecipeBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        setSupportActionBar(binding.toolbar)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        binding.toolbar.setNavigationOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         loader = LoadingUtils(this)
         imageUtils = ImageUtils(this)
         recipeViewModel = RecipeViewModel(RecipeRepositoryImpl())
 
-        val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
-            if (hasFocus) {
-                binding.main.postDelayed({
-                    binding.main.smoothScrollTo(0, view.bottom)
-                }, 200)
-            }
-        }
-        binding.recipeTitle.onFocusChangeListener = focusChangeListener
-        binding.recipeDesc.onFocusChangeListener = focusChangeListener
-        binding.recipeDuration.onFocusChangeListener = focusChangeListener
-        binding.recipeCarbs.onFocusChangeListener = focusChangeListener
-        binding.recipeProteins.onFocusChangeListener = focusChangeListener
-        binding.recipeFats.onFocusChangeListener = focusChangeListener
 
         recipeId = intent.getStringExtra("RECIPE_ID")
         val title = intent.getStringExtra("RECIPE_TITLE") ?: ""
@@ -79,17 +72,22 @@ class EditRecipeActivity : AppCompatActivity() {
         binding.recipeFats.setText(fats)
 
         if (!currentImageUrl.isNullOrEmpty()) {
-            Picasso.get().load(currentImageUrl).into(binding.imageBrowse)
+            Picasso.get()
+                .load(currentImageUrl)
+                .placeholder(R.drawable.placeholder_image)
+                .error(R.drawable.placeholder_image)
+                .into(binding.imageBrowse)
+        } else {
+            binding.imageBrowse.setImageResource(R.drawable.placeholder_image)
         }
 
-        // Populate steps
         val steps = process.split("\n").filter { it.isNotBlank() }
         if (steps.isNotEmpty()) {
             for (step in steps) {
                 addStepView(step)
             }
         } else {
-            addStepView() // Add one empty step if there are none
+            addStepView()
         }
 
         val categorySpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_categories, android.R.layout.simple_spinner_dropdown_item)
@@ -128,16 +126,6 @@ class EditRecipeActivity : AppCompatActivity() {
             handleUpdateRecipe()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
-            val targetPadding = if (ime.bottom > 0) ime.bottom else systemBars.bottom
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
-            WindowInsetsCompat.Builder(insets).setInsets(
-                WindowInsetsCompat.Type.ime(),
-                androidx.core.graphics.Insets.of(0, 0, 0, 0)
-            ).build()
-        }
     }
 
     private fun addStepView(text: String? = null) {
@@ -185,7 +173,7 @@ class EditRecipeActivity : AppCompatActivity() {
     private fun updateRecipeInFirebase(imageUrl: String) {
         val newTitle = binding.recipeTitle.text.toString().trim()
         val newDescription = binding.recipeDesc.text.toString().trim()
-        val newProcess = getStepsAsString() // Ambil dari dynamic views
+        val newProcess = getStepsAsString()
         val newDuration = binding.recipeDuration.text.toString().trim()
         val newCarbs = binding.recipeCarbs.text.toString().trim()
         val newProteins = binding.recipeProteins.text.toString().trim()
