@@ -2,7 +2,9 @@ package com.example.letmecook.ui.activity
 
 import android.os.Bundle
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
@@ -29,30 +31,40 @@ class DashboardActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // Mengaktifkan mode Edge-to-Edge
         enableEdgeToEdge()
-
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- INI ADALAH KODE PERBAIKANNYA ---
+        // --- KODE PERBAIKAN DI SINI ---
+        // Menambahkan validasi saat tombol kembali ditekan
+        val backPressedCallback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // Tampilkan dialog konfirmasi
+                AlertDialog.Builder(this@DashboardActivity)
+                    .setTitle("Exit Application")
+                    .setMessage("Are you sure you want to exit?")
+                    .setPositiveButton("Yes") { _, _ ->
+                        // Jika ya, keluar dari aplikasi
+                        finish()
+                    }
+                    .setNegativeButton("No", null) // Jika tidak, tutup dialog
+                    .show()
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, backPressedCallback)
+        // --- AKHIR DARI KODE PERBAIKAN ---
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
 
-            // Menerapkan padding atas untuk status bar
             view.setPadding(0, insets.top, 0, 0)
 
-            // Menerapkan padding bawah sebagai margin untuk BottomNavigationView
-            // Ini akan mendorong menu navigasi ke atas, tepat di atas 3-button navigation bar
             binding.bottomNav.updateLayoutParams<ViewGroup.MarginLayoutParams> {
                 bottomMargin = insets.bottom
             }
 
-            // Mengembalikan insets yang tidak dipakai
             WindowInsetsCompat.CONSUMED
         }
-        // --- AKHIR DARI KODE PERBAIKAN ---
 
         setupFragments()
 

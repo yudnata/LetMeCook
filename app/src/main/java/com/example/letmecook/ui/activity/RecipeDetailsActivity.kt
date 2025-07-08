@@ -5,9 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
@@ -39,8 +43,22 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        enableEdgeToEdge() // Mengaktifkan mode Edge-to-Edge
         binding = ActivityRecipeDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        // --- KODE PERBAIKAN DI SINI ---
+        // Listener ini akan menangani padding untuk bilah navigasi sistem
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
+            val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
+
+            // Terapkan padding bawah pada root view untuk memberi ruang bagi bilah navigasi
+            view.updatePadding(bottom = insets.bottom)
+
+            // Kembalikan insets yang tidak dipakai agar sistem dapat menanganinya
+            WindowInsetsCompat.CONSUMED
+        }
+        // --- AKHIR DARI KODE PERBAIKAN ---
 
         loader = LoadingUtils(this)
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -118,14 +136,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
             commentAdapter.updateComments(comments)
             updateRating(comments)
 
-            // --- PERUBAHAN UTAMA DI SINI ---
-            // Periksa apakah pengguna saat ini sudah berkomentar
             val userHasCommented = comments.any { it.userId == currentUserId }
             updateCommentSectionVisibility(userHasCommented)
         })
     }
 
-    // --- FUNGSI BARU ---
     private fun updateCommentSectionVisibility(hasCommented: Boolean) {
         if (hasCommented) {
             binding.addCommentSection.visibility = View.GONE
@@ -160,7 +175,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.recipeDescription.text = recipe.description
         binding.recipeProcess.text = recipe.process
 
-        // Logika untuk status halal
         binding.recipeHalalStatus.text = recipe.halalStatus
         if (recipe.halalStatus.equals("Halal", ignoreCase = true)) {
             binding.recipeHalalStatus.background = ContextCompat.getDrawable(this, R.drawable.badge_halal_bg)
@@ -182,7 +196,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
             binding.ratingBar.rating = averageRating
             binding.ratingCount.text = "(${decimalFormat.format(averageRating)} from $ratingCount ratings)"
 
-            // Update recipe in database
             val updateData = mutableMapOf<String, Any>(
                 "averageRating" to averageRating,
                 "totalRatings" to ratingCount
