@@ -1,10 +1,13 @@
 <resources>
     <string name="app_name">LetMeCook</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <string-array name="recipe_categories">
+        <item>Appetizer</item>
+        <item>Main Course</item>
+        <item>Dessert</item>
+        <item>Snack</item>
+        <item>Drink</item>
         <item>Vegetarian</item>
-        <item>Non-Vegetarian</item>
     </string-array>
 </resources>

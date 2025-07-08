@@ -31,6 +31,7 @@ class RecipesFragment : Fragment() {
     }
     private lateinit var myRecipesAdapter: MyRecipesAdapter
     private var currentFilter: String = "All"
+    private var areAllCategoriesVisible = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -51,6 +52,22 @@ class RecipesFragment : Fragment() {
         setupRecyclerView()
         setupFilterChips()
         fetchUserRecipes()
+        setupSeeAllButton()
+    }
+
+    private fun setupSeeAllButton() {
+        binding.seeAllCategories.setOnClickListener {
+            areAllCategoriesVisible = !areAllCategoriesVisible
+            toggleCategoryVisibility()
+        }
+    }
+
+    private fun toggleCategoryVisibility() {
+        val visibility = if (areAllCategoriesVisible) View.VISIBLE else View.GONE
+        binding.chipSnack.visibility = visibility
+        binding.chipDrink.visibility = visibility
+        binding.chipVegetarian.visibility = visibility
+        binding.seeAllCategories.text = if (areAllCategoriesVisible) "See Less" else "See All"
     }
 
     private fun setupRecyclerView() {
@@ -78,8 +95,12 @@ class RecipesFragment : Fragment() {
         binding.filterChipGroup.setOnCheckedChangeListener { group, checkedId ->
             currentFilter = when (checkedId) {
                 R.id.chipAll -> "All"
-                R.id.chipVeg -> "Vegetarian"
-                R.id.chipNonVeg -> "Non-Vegetarian"
+                R.id.chipAppetizer -> "Appetizer"
+                R.id.chipMainCourse -> "Main Course"
+                R.id.chipDessert -> "Dessert"
+                R.id.chipSnack -> "Snack"
+                R.id.chipDrink -> "Drink"
+                R.id.chipVegetarian -> "Vegetarian"
                 else -> "All"
             }
             filterRecipes()
