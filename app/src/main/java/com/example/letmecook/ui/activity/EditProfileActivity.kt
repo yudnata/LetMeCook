@@ -69,14 +69,16 @@ class EditProfileActivity : AppCompatActivity() {
                     binding.selectCountry.setSelection(countryIndex)
                     binding.autoCompleteCity.setText(it.city)
 
+                    // --- UBAH BAGIAN INI ---
                     if (!it.imageUrl.isNullOrEmpty()) {
                         Picasso.get()
                             .load(it.imageUrl)
-                            .placeholder(R.drawable.placeholder)
+                            .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
                             .into(binding.imageBrowse)
                     } else {
-                        binding.imageBrowse.setImageResource(R.drawable.placeholder)
+                        binding.imageBrowse.setImageResource(R.drawable.placeholder_image) // Gunakan placeholder baru
                     }
+                    // --- AKHIR PERUBAHAN ---
                 }
             }
         }

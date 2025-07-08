@@ -43,12 +43,16 @@ class RecipesAdapter(
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = filteredRecipes[position]
 
+        // --- UBAH BAGIAN INI ---
         Glide.with(holder.itemView.context)
             .load(recipe.imageUrl)
+            .placeholder(R.drawable.placeholder_image) // Tambahkan placeholder
+            .error(R.drawable.placeholder_image)     // Tambahkan error placeholder
             .into(holder.recipeImage)
+        // --- AKHIR PERUBAHAN ---
 
         holder.categoryBadge.text = recipe.category
-        holder.cuisineBadge.text = recipe.cuisine // Mengisi data masakan
+        holder.cuisineBadge.text = recipe.cuisine
         holder.recipeTitle.text = recipe.title
 
         if (recipe.creatorId.isNotEmpty()) {

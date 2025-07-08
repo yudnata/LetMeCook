@@ -205,10 +205,13 @@ class HomeFragment : Fragment() {
                 userViewModel.getDataFromDatabase(recipe.creatorId) { user ->
                     if(isAdded) binding.bannerRecipeAuthor.text = "by ${user?.fullName ?: "Unknown"}"
                 }
+
+                // --- UBAH BAGIAN INI ---
                 Glide.with(this@HomeFragment)
                     .load(recipe.imageUrl)
-                    .placeholder(R.drawable.recipe_preview)
+                    .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
                     .into(binding.bannerRecipeImage)
+                // --- AKHIR PERUBAHAN ---
 
                 binding.bannerRecipeImage.startAnimation(fadeIn)
                 binding.bannerRecipeTitle.startAnimation(fadeIn)
@@ -230,7 +233,6 @@ class HomeFragment : Fragment() {
             recipe.copy(isBookmarked = bookmarkedRecipeIds.contains(recipe.id))
         }
 
-        // --- PERUBAHAN DI SINI ---
         val sortedByRating = updatedRecipes.sortedByDescending { it.averageRating }
 
         val categorizedList = if (currentFilter == "All") sortedByRating else sortedByRating.filter { it.category == currentFilter }

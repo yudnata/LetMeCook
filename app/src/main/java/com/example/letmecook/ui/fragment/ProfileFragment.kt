@@ -50,14 +50,16 @@ class ProfileFragment : Fragment() {
             binding.lblGender.text = user?.gender
             binding.lblAddress.text = "${user?.country}, ${user?.city}"
 
+            // --- UBAH BAGIAN INI ---
             if (!user?.imageUrl.isNullOrEmpty()) {
                 Picasso.get()
                     .load(user?.imageUrl)
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
                     .into(binding.userAvatar)
             } else {
-                binding.userAvatar.setImageResource(R.drawable.placeholder)
+                binding.userAvatar.setImageResource(R.drawable.placeholder_image) // Gunakan placeholder baru
             }
+            // --- AKHIR PERUBAHAN ---
         }
 
         binding.bookmarksLayout.setOnClickListener {

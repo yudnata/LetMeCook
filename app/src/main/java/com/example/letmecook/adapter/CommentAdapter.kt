@@ -33,13 +33,17 @@ class CommentAdapter(
             ratingBar.rating = comment.rating
             commentText.text = comment.comment
 
+            // --- UBAH BAGIAN INI ---
             if (comment.userAvatar.isNotEmpty()) {
-                Picasso.get().load(comment.userAvatar).placeholder(R.drawable.placeholder).into(userAvatar)
+                Picasso.get()
+                    .load(comment.userAvatar)
+                    .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
+                    .into(userAvatar)
             } else {
-                userAvatar.setImageResource(R.drawable.placeholder)
+                userAvatar.setImageResource(R.drawable.placeholder_image) // Gunakan placeholder baru
             }
+            // --- AKHIR PERUBAHAN ---
 
-            // --- PERBAIKAN LOGIKA WAKTU DAN LABEL EDITED ---
             val displayTimestamp = comment.updateTimestamp ?: comment.timestamp
             val timeAgo = DateUtils.getRelativeTimeSpanString(displayTimestamp, System.currentTimeMillis(), DateUtils.MINUTE_IN_MILLIS)
             commentDate.text = timeAgo

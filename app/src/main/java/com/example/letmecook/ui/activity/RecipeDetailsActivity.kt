@@ -1,22 +1,19 @@
 package com.example.letmecook.ui.activity
 
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.example.letmecook.R
-import com.example.letmecook.adapter.CommentAdapter
+import com.example.letmecook.adapter.RecipeDetailsViewPagerAdapter
 import com.example.letmecook.databinding.ActivityRecipeDetailsBinding
 import com.example.letmecook.model.BookmarkModel
 import com.example.letmecook.model.CommentModel
@@ -26,15 +23,21 @@ import com.example.letmecook.utils.LoadingUtils
 import com.example.letmecook.viewmodel.BookmarkViewModel
 import com.example.letmecook.viewmodel.CommentViewModel
 import com.example.letmecook.viewmodel.RecipeViewModel
+import com.example.letmecook.viewmodel.RecipeViewModelFactory
+import com.google.android.material.tabs.TabLayoutMediator
 import com.google.firebase.auth.FirebaseAuth
 import java.text.DecimalFormat
 
 class RecipeDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecipeDetailsBinding
-    private val recipeViewModel: RecipeViewModel by lazy { RecipeViewModel(RecipeRepositoryImpl()) }
+
+    private val recipeViewModel: RecipeViewModel by lazy {
+        ViewModelProvider(this, RecipeViewModelFactory(RecipeRepositoryImpl())).get(RecipeViewModel::class.java)
+    }
+
     private val bookmarkViewModel: BookmarkViewModel by lazy { BookmarkViewModel() }
     private val commentViewModel: CommentViewModel by lazy { CommentViewModel() }
-    private lateinit var commentAdapter: CommentAdapter
+
 
     private var recipeId: String = ""
     private var currentRecipe: Recipe? = null
@@ -43,22 +46,15 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge() // Mengaktifkan mode Edge-to-Edge
+        enableEdgeToEdge()
         binding = ActivityRecipeDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // --- KODE PERBAIKAN DI SINI ---
-        // Listener ini akan menangani padding untuk bilah navigasi sistem
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, windowInsets ->
             val insets = windowInsets.getInsets(WindowInsetsCompat.Type.systemBars())
-
-            // Terapkan padding bawah pada root view untuk memberi ruang bagi bilah navigasi
             view.updatePadding(bottom = insets.bottom)
-
-            // Kembalikan insets yang tidak dipakai agar sistem dapat menanganinya
             WindowInsetsCompat.CONSUMED
         }
-        // --- AKHIR DARI KODE PERBAIKAN ---
 
         loader = LoadingUtils(this)
         currentUserId = FirebaseAuth.getInstance().currentUser?.uid
@@ -71,13 +67,14 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
 
         setupUI()
-        setupRecyclerView()
         loadRecipeDetails()
         observeBookmarkChanges()
-        observeComments()
+        setupViewPager()
     }
 
     private fun setupUI() {
+        setSupportActionBar(binding.toolbar)
+        binding.collapsingToolbar.title = " " // Hapus judul dari toolbar
         binding.backButton.setOnClickListener { finish() }
         binding.shareButton.setOnClickListener { Toast.makeText(this, "Share functionality coming soon", Toast.LENGTH_SHORT).show() }
         binding.favoriteButton.setOnClickListener {
@@ -87,22 +84,19 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.bookmarkbutton.setOnClickListener {
             handleBookmark()
         }
-        binding.submitCommentButton.setOnClickListener {
-            handleCommentSubmission()
-        }
     }
 
-    private fun setupRecyclerView() {
-        commentAdapter = CommentAdapter(
-            emptyList(),
-            currentUserId,
-            onEditClick = { comment -> handleCommentEditing(comment) },
-            onDeleteClick = { comment -> handleCommentDeletion(comment) }
-        )
-        binding.commentsRecyclerView.apply {
-            layoutManager = LinearLayoutManager(this@RecipeDetailsActivity)
-            adapter = commentAdapter
-        }
+    private fun setupViewPager() {
+        val adapter = RecipeDetailsViewPagerAdapter(supportFragmentManager, lifecycle)
+        binding.viewPager.adapter = adapter
+
+        TabLayoutMediator(binding.tabLayout, binding.viewPager) { tab, position ->
+            tab.text = when (position) {
+                0 -> "Overview"
+                1 -> "Reviews"
+                else -> null
+            }
+        }.attach()
     }
 
     private fun setButtonToSavedState() {
@@ -130,25 +124,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun observeComments() {
-        commentViewModel.getComments(recipeId)
-        commentViewModel.comments.observe(this, Observer { comments ->
-            commentAdapter.updateComments(comments)
-            updateRating(comments)
-
-            val userHasCommented = comments.any { it.userId == currentUserId }
-            updateCommentSectionVisibility(userHasCommented)
-        })
-    }
-
-    private fun updateCommentSectionVisibility(hasCommented: Boolean) {
-        if (hasCommented) {
-            binding.addCommentSection.visibility = View.GONE
-        } else {
-            binding.addCommentSection.visibility = View.VISIBLE
-        }
-    }
-
     private fun loadRecipeDetails() {
         loader.show()
         recipeViewModel.getRecipe(recipeId) { recipe, success, message ->
@@ -163,8 +138,16 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
     }
 
+
     private fun displayRecipeDetails(recipe: Recipe) {
-        Glide.with(this).load(recipe.imageUrl).placeholder(R.drawable.placeholder).error(R.drawable.placeholder).into(binding.recipeImage)
+        // --- PERBAIKI BAGIAN INI ---
+        Glide.with(this)
+            .load(recipe.imageUrl)
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.placeholder_image)
+            .into(binding.recipeImage)
+        // --- AKHIR PERBAIKAN ---
+
         binding.recipeTitle.text = recipe.title
         binding.recipeCategory.text = recipe.category
         binding.recipeCuisine.text = recipe.cuisine
@@ -172,8 +155,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.recipeProteins.text = recipe.proteins
         binding.recipeFats.text = recipe.fats
         binding.recipeCarbs.text = recipe.carbs
-        binding.recipeDescription.text = recipe.description
-        binding.recipeProcess.text = recipe.process
+
 
         binding.recipeHalalStatus.text = recipe.halalStatus
         if (recipe.halalStatus.equals("Halal", ignoreCase = true)) {
@@ -181,6 +163,10 @@ class RecipeDetailsActivity : AppCompatActivity() {
         } else {
             binding.recipeHalalStatus.background = ContextCompat.getDrawable(this, R.drawable.badge_non_halal_bg)
         }
+        commentViewModel.getComments(recipeId)
+        commentViewModel.comments.observe(this, Observer { comments ->
+            updateRating(comments)
+        })
 
         binding.contentLayout.visibility = View.VISIBLE
     }
@@ -234,91 +220,5 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Bookmark failed: $message", Toast.LENGTH_SHORT).show()
             }
         }
-    }
-
-    private fun handleCommentSubmission() {
-        val userId = currentUserId
-        if (userId == null) {
-            Toast.makeText(this, "Please login to leave a review", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val commentText = binding.commentEditText.text.toString().trim()
-        val rating = binding.addRatingBar.rating
-
-        if (commentText.isEmpty()) {
-            Toast.makeText(this, "Please write a comment", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        if (rating == 0.0f) {
-            Toast.makeText(this, "Please provide a rating", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        loader.show()
-        val newComment = CommentModel(
-            recipeId = recipeId,
-            userId = userId,
-            comment = commentText,
-            rating = rating,
-            timestamp = System.currentTimeMillis()
-        )
-
-        commentViewModel.addComment(newComment) { success, message ->
-            loader.dismiss()
-            if (success) {
-                Toast.makeText(this, "Review submitted successfully!", Toast.LENGTH_SHORT).show()
-                binding.commentEditText.text?.clear()
-                binding.addRatingBar.rating = 0f
-            } else {
-                Toast.makeText(this, "Failed to submit review: $message", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    private fun handleCommentDeletion(comment: CommentModel) {
-        AlertDialog.Builder(this)
-            .setTitle("Delete Comment")
-            .setMessage("Are you sure you want to delete this comment?")
-            .setPositiveButton("Delete") { _, _ ->
-                loader.show()
-                commentViewModel.deleteComment(comment.id) { success, message ->
-                    loader.dismiss()
-                    if (success) {
-                        Toast.makeText(this, "Comment deleted successfully", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Failed to delete comment: $message", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
-
-    private fun handleCommentEditing(comment: CommentModel) {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_comment, null)
-        val editText = dialogView.findViewById<EditText>(R.id.editCommentEditText)
-        editText.setText(comment.comment)
-
-        AlertDialog.Builder(this)
-            .setTitle("Edit Comment")
-            .setView(dialogView)
-            .setPositiveButton("Save") { _, _ ->
-                val newCommentText = editText.text.toString().trim()
-                if (newCommentText.isNotEmpty()) {
-                    loader.show()
-                    commentViewModel.updateComment(comment.id, newCommentText) { success, message ->
-                        loader.dismiss()
-                        if (success) {
-                            Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Failed to update comment: $message", Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
     }
 }

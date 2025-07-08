@@ -32,10 +32,10 @@ class MyRecipesAdapter(
             if (recipe.imageUrl.isNotEmpty()) {
                 Picasso.get()
                     .load(recipe.imageUrl)
-                    .placeholder(R.drawable.ic_launcher_foreground)
+                    .placeholder(R.drawable.placeholder_image) // Ganti placeholder
                     .into(imgRecipe)
             } else {
-                imgRecipe.setImageResource(R.drawable.ic_launcher_foreground)
+                imgRecipe.setImageResource(R.drawable.placeholder_image) // Ganti placeholder
             }
 
             recipeName.text = recipe.title

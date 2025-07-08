@@ -29,7 +29,7 @@ class BookmarksAdapter(
         with(holder.binding) {
             Glide.with(root.context)
                 .load("")
-                .placeholder(R.drawable.placeholder)
+                .placeholder(R.drawable.placeholder_image) // Ganti placeholder
                 .into(imgRecipe)
 
             onFetchEvent(bookmark.recipeId) { recipe ->
@@ -43,7 +43,7 @@ class BookmarksAdapter(
 
                     Glide.with(root.context)
                         .load(it.imageUrl)
-                        .placeholder(R.drawable.placeholder)
+                        .placeholder(R.drawable.placeholder_image) // Ganti placeholder
                         .into(imgRecipe)
                 } ?: run {
                     recipeName.text = "Recipe not found"
