@@ -24,6 +24,7 @@ class RecipesAdapter(
     class RecipeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val recipeImage: ImageView = view.findViewById(R.id.recipeImage)
         val categoryBadge: TextView = view.findViewById(R.id.categoryBadge)
+        val cuisineBadge: TextView = view.findViewById(R.id.cuisineBadge) // TextView baru
         val recipeTitle: TextView = view.findViewById(R.id.recipeTitle)
         val authorName: TextView = view.findViewById(R.id.authorName)
         val recipeProtein: TextView = view.findViewById(R.id.recipeProtein)
@@ -47,6 +48,7 @@ class RecipesAdapter(
             .into(holder.recipeImage)
 
         holder.categoryBadge.text = recipe.category
+        holder.cuisineBadge.text = recipe.cuisine // Mengisi data masakan
         holder.recipeTitle.text = recipe.title
 
         if (recipe.creatorId.isNotEmpty()) {
@@ -62,7 +64,6 @@ class RecipesAdapter(
         holder.recipeCarbs.text = recipe.carbs
         holder.recipeFats.text = recipe.fats
 
-        // --- LOGIKA UTAMA TOMBOL DI SINI ---
         if (recipe.isBookmarked) {
             holder.bookmarkButton.text = "Recipe Saved"
             holder.bookmarkButton.isEnabled = false

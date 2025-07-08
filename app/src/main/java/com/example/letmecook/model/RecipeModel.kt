@@ -10,9 +10,10 @@ data class Recipe (
     val proteins: String = "",
     val fats: String = "",
     val category: String = "",
+    val cuisine: String = "",
     val creatorId: String = "",
     var creatorName: String = "",
     val imageUrl: String = "",
     @set:JvmName("setBookmarked")
-    var isBookmarked: Boolean = false // Tambahkan variabel ini
+    var isBookmarked: Boolean = false
 )

@@ -40,7 +40,6 @@ class EditRecipeActivity : AppCompatActivity() {
         imageUtils = ImageUtils(this)
         recipeViewModel = RecipeViewModel(RecipeRepositoryImpl())
 
-        // --- AWAL DARI KODE BARU UNTUK SCROLL OTOMATIS ---
         val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 binding.main.postDelayed({
@@ -55,7 +54,6 @@ class EditRecipeActivity : AppCompatActivity() {
         binding.recipeCarbs.onFocusChangeListener = focusChangeListener
         binding.recipeProteins.onFocusChangeListener = focusChangeListener
         binding.recipeFats.onFocusChangeListener = focusChangeListener
-        // --- AKHIR DARI KODE BARU UNTUK SCROLL OTOMATIS ---
 
         recipeId = intent.getStringExtra("RECIPE_ID")
         val title = intent.getStringExtra("RECIPE_TITLE") ?: ""
@@ -65,7 +63,8 @@ class EditRecipeActivity : AppCompatActivity() {
         val carbs = intent.getStringExtra("RECIPE_CARBS") ?: ""
         val proteins = intent.getStringExtra("RECIPE_PROTEINS") ?: ""
         val fats = intent.getStringExtra("RECIPE_FATS") ?: ""
-        val category = intent.getStringExtra("EVENT_CATEGORY") ?: ""
+        val category = intent.getStringExtra("RECIPE_CATEGORY") ?: ""
+        val cuisine = intent.getStringExtra("RECIPE_CUISINE") ?: ""
         currentImageUrl = intent.getStringExtra("RECIPE_IMAGE_URL") ?: ""
 
         binding.recipeTitle.setText(title)
@@ -80,17 +79,26 @@ class EditRecipeActivity : AppCompatActivity() {
             Picasso.get().load(currentImageUrl).into(binding.imageBrowse)
         }
 
-        val spinnerAdapter = ArrayAdapter.createFromResource(
+        val categorySpinnerAdapter = ArrayAdapter.createFromResource(
             this,
             R.array.recipe_categories,
             android.R.layout.simple_spinner_dropdown_item
         )
-        binding.selectCategory.adapter = spinnerAdapter
+        binding.selectCategory.adapter = categorySpinnerAdapter
         val categories = resources.getStringArray(R.array.recipe_categories)
-        val index = categories.indexOf(category)
-        if (index >= 0) binding.selectCategory.setSelection(index)
+        val categoryIndex = categories.indexOf(category)
+        if (categoryIndex >= 0) binding.selectCategory.setSelection(categoryIndex)
 
-        // Image picking
+        val cuisineSpinnerAdapter = ArrayAdapter.createFromResource(
+            this,
+            R.array.recipe_cuisines,
+            android.R.layout.simple_spinner_dropdown_item
+        )
+        binding.selectCuisine.adapter = cuisineSpinnerAdapter
+        val cuisines = resources.getStringArray(R.array.recipe_cuisines)
+        val cuisineIndex = cuisines.indexOf(cuisine)
+        if (cuisineIndex >= 0) binding.selectCuisine.setSelection(cuisineIndex)
+
         imageUtils.registerActivity { uri ->
             uri?.let {
                 imageUri = it
@@ -125,13 +133,11 @@ class EditRecipeActivity : AppCompatActivity() {
         }
 
         if (imageUri != null) {
-            // If user picked a new image, upload it
             recipeViewModel.uploadRecipeImage(this, imageUri!!) { imageUrl ->
                 Log.d("UpdateRecipeActivity", "New Image URL: $imageUrl")
                 updateRecipeInFirebase(imageUrl ?: currentImageUrl.orEmpty())
             }
         } else {
-            // No new image selected; use existing image URL
             updateRecipeInFirebase(currentImageUrl.orEmpty())
         }
     }
@@ -145,6 +151,7 @@ class EditRecipeActivity : AppCompatActivity() {
         val newProteins = binding.recipeProteins.text.toString().trim()
         val newFats = binding.recipeFats.text.toString().trim()
         val newCategory = binding.selectCategory.selectedItem.toString()
+        val newCuisine = binding.selectCuisine.selectedItem.toString()
 
         if (newTitle.isEmpty() || newDescription.isEmpty() || newProcess.isEmpty() || newDuration.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
@@ -152,7 +159,6 @@ class EditRecipeActivity : AppCompatActivity() {
             return
         }
 
-        // Build a data map for partial update
         val data = mutableMapOf<String, Any>(
             "title" to newTitle,
             "description" to newDescription,
@@ -162,6 +168,7 @@ class EditRecipeActivity : AppCompatActivity() {
             "proteins" to newProteins,
             "fats" to newFats,
             "category" to newCategory,
+            "cuisine" to newCuisine,
             "imageUrl" to imageUrl
         )
 

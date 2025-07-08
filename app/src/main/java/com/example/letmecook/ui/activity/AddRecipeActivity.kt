@@ -106,8 +106,9 @@ class AddRecipeActivity : AppCompatActivity() {
         val proteins = binding.recipeProteins.text.toString().trim()
         val fats = binding.recipeFats.text.toString().trim()
         val category = binding.selectCategory.selectedItem.toString()
+        val cuisine = binding.selectCuisine.selectedItem.toString()
 
-        if (title.isEmpty() || description.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty()) {
+        if (title.isEmpty() || description.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty() || cuisine.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
             loader.dismiss()
             return
@@ -127,6 +128,7 @@ class AddRecipeActivity : AppCompatActivity() {
             proteins = proteins,
             fats = fats,
             category = category,
+            cuisine = cuisine,
             creatorId = currUser.toString(),
             imageUrl = imageUrl,
         )

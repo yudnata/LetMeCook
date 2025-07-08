@@ -26,18 +26,37 @@
                 android:src="@drawable/recipe_preview"
                 android:scaleType="centerCrop"/>
 
-            <TextView
-                android:id="@+id/categoryBadge"
+            <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
-                android:background="@drawable/badge_bg"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="6dp"
-                android:textColor="@android:color/black"
-                android:textSize="12sp"
-                android:text="Non-Veg"
-                />
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/categoryBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/badge_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    tools:text="Main Course"
+                    />
+
+                <TextView
+                    android:id="@+id/cuisineBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:background="@drawable/badge_bg"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:textColor="@android:color/black"
+                    android:textSize="12sp"
+                    tools:text="Western Food"
+                    />
+            </LinearLayout>
         </FrameLayout>
 
         <LinearLayout

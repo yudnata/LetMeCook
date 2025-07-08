@@ -10,4 +10,14 @@
         <item>Drink</item>
         <item>Vegetarian</item>
     </string-array>
+
+    <string-array name="recipe_cuisines">
+        <item>Indonesian Food</item>
+        <item>Chinese Food</item>
+        <item>Japanese Food</item>
+        <item>Korean Food</item>
+        <item>Thai Food</item>
+        <item>Indian Food</item>
+        <item>Western Food</item>
+    </string-array>
 </resources>

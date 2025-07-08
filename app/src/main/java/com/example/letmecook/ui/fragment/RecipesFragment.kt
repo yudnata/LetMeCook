@@ -136,6 +136,7 @@ class RecipesFragment : Fragment() {
             putExtra("RECIPE_PROTEINS", recipe.proteins)
             putExtra("RECIPE_FATS", recipe.fats)
             putExtra("RECIPE_CATEGORY", recipe.category)
+            putExtra("RECIPE_CUISINE", recipe.cuisine)
             putExtra("RECIPE_IMAGE_URL", recipe.imageUrl)
         }
         startActivity(intent)

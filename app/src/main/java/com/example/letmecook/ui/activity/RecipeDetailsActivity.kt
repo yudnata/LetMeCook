@@ -100,6 +100,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         Glide.with(this).load(recipe.imageUrl).placeholder(R.drawable.placeholder).error(R.drawable.placeholder).into(binding.recipeImage)
         binding.recipeTitle.text = recipe.title
         binding.recipeCategory.text = recipe.category
+        binding.recipeCuisine.text = recipe.cuisine
         binding.recipeDuration.text = recipe.duration
         binding.recipeProteins.text = recipe.proteins
         binding.recipeFats.text = recipe.fats
