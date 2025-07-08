@@ -65,6 +65,7 @@ class EditRecipeActivity : AppCompatActivity() {
         val fats = intent.getStringExtra("RECIPE_FATS") ?: ""
         val category = intent.getStringExtra("RECIPE_CATEGORY") ?: ""
         val cuisine = intent.getStringExtra("RECIPE_CUISINE") ?: ""
+        val halalStatus = intent.getStringExtra("RECIPE_HALAL_STATUS") ?: ""
         currentImageUrl = intent.getStringExtra("RECIPE_IMAGE_URL") ?: ""
 
         binding.recipeTitle.setText(title)
@@ -79,25 +80,23 @@ class EditRecipeActivity : AppCompatActivity() {
             Picasso.get().load(currentImageUrl).into(binding.imageBrowse)
         }
 
-        val categorySpinnerAdapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.recipe_categories,
-            android.R.layout.simple_spinner_dropdown_item
-        )
+        val categorySpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_categories, android.R.layout.simple_spinner_dropdown_item)
         binding.selectCategory.adapter = categorySpinnerAdapter
         val categories = resources.getStringArray(R.array.recipe_categories)
         val categoryIndex = categories.indexOf(category)
         if (categoryIndex >= 0) binding.selectCategory.setSelection(categoryIndex)
 
-        val cuisineSpinnerAdapter = ArrayAdapter.createFromResource(
-            this,
-            R.array.recipe_cuisines,
-            android.R.layout.simple_spinner_dropdown_item
-        )
+        val cuisineSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_cuisines, android.R.layout.simple_spinner_dropdown_item)
         binding.selectCuisine.adapter = cuisineSpinnerAdapter
         val cuisines = resources.getStringArray(R.array.recipe_cuisines)
         val cuisineIndex = cuisines.indexOf(cuisine)
         if (cuisineIndex >= 0) binding.selectCuisine.setSelection(cuisineIndex)
+
+        val halalStatusSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_halal_status, android.R.layout.simple_spinner_dropdown_item)
+        binding.selectHalalStatus.adapter = halalStatusSpinnerAdapter
+        val halalStatuses = resources.getStringArray(R.array.recipe_halal_status)
+        val halalStatusIndex = halalStatuses.indexOf(halalStatus)
+        if (halalStatusIndex >= 0) binding.selectHalalStatus.setSelection(halalStatusIndex)
 
         imageUtils.registerActivity { uri ->
             uri?.let {
@@ -129,6 +128,7 @@ class EditRecipeActivity : AppCompatActivity() {
         loader.show()
         if (recipeId.isNullOrEmpty()) {
             Toast.makeText(this, "Recipe ID missing. Cannot update.", Toast.LENGTH_SHORT).show()
+            loader.dismiss()
             return
         }
 
@@ -152,6 +152,7 @@ class EditRecipeActivity : AppCompatActivity() {
         val newFats = binding.recipeFats.text.toString().trim()
         val newCategory = binding.selectCategory.selectedItem.toString()
         val newCuisine = binding.selectCuisine.selectedItem.toString()
+        val newHalalStatus = binding.selectHalalStatus.selectedItem.toString()
 
         if (newTitle.isEmpty() || newDescription.isEmpty() || newProcess.isEmpty() || newDuration.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
@@ -169,6 +170,7 @@ class EditRecipeActivity : AppCompatActivity() {
             "fats" to newFats,
             "category" to newCategory,
             "cuisine" to newCuisine,
+            "halalStatus" to newHalalStatus,
             "imageUrl" to imageUrl
         )
 

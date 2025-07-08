@@ -11,6 +11,7 @@ data class Recipe (
     val fats: String = "",
     val category: String = "",
     val cuisine: String = "",
+    val halalStatus: String = "",
     val creatorId: String = "",
     var creatorName: String = "",
     val imageUrl: String = "",

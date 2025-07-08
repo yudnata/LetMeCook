@@ -20,4 +20,9 @@
         <item>Indian Food</item>
         <item>Western Food</item>
     </string-array>
+
+    <string-array name="recipe_halal_status">
+        <item>Halal</item>
+        <item>Non-Halal</item>
+    </string-array>
 </resources>

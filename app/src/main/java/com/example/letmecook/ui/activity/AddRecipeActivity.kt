@@ -41,7 +41,6 @@ class AddRecipeActivity : AppCompatActivity() {
         val recipeRepository = RecipeRepositoryImpl()
         recipeViewModel = RecipeViewModel(recipeRepository)
 
-        // --- AWAL DARI KODE BARU UNTUK SCROLL OTOMATIS ---
         val focusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
             if (hasFocus) {
                 binding.main.postDelayed({
@@ -56,7 +55,6 @@ class AddRecipeActivity : AppCompatActivity() {
         binding.recipeCarbs.onFocusChangeListener = focusChangeListener
         binding.recipeProteins.onFocusChangeListener = focusChangeListener
         binding.recipeFats.onFocusChangeListener = focusChangeListener
-        // --- AKHIR DARI KODE BARU UNTUK SCROLL OTOMATIS ---
 
         imageUtils.registerActivity { uri ->
             uri?.let {
@@ -107,8 +105,9 @@ class AddRecipeActivity : AppCompatActivity() {
         val fats = binding.recipeFats.text.toString().trim()
         val category = binding.selectCategory.selectedItem.toString()
         val cuisine = binding.selectCuisine.selectedItem.toString()
+        val halalStatus = binding.selectHalalStatus.selectedItem.toString()
 
-        if (title.isEmpty() || description.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty() || cuisine.isEmpty()) {
+        if (title.isEmpty() || description.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty() || cuisine.isEmpty() || halalStatus.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
             loader.dismiss()
             return
@@ -129,6 +128,7 @@ class AddRecipeActivity : AppCompatActivity() {
             fats = fats,
             category = category,
             cuisine = cuisine,
+            halalStatus = halalStatus,
             creatorId = currUser.toString(),
             imageUrl = imageUrl,
         )

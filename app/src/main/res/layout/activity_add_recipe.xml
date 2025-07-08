@@ -10,7 +10,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="16dp">
 
         <ImageView
             android:id="@+id/imageBrowse"
@@ -280,6 +281,32 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/textViewCuisine" />
 
+        <TextView
+            android:id="@+id/textViewHalal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="35dp"
+            android:layout_marginTop="12dp"
+            android:text="Halal Status"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/selectCuisine" />
+
+        <Spinner
+            android:id="@+id/selectHalalStatus"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginStart="36dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginEnd="36dp"
+            android:background="@drawable/input_shape"
+            android:entries="@array/recipe_halal_status"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewHalal" />
+
         <Button
             android:id="@+id/addRecipeBtn"
             android:layout_width="match_parent"
@@ -294,6 +321,6 @@
             app:cornerRadius="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectCuisine" />
+            app:layout_constraintTop_toBottomOf="@+id/selectHalalStatus" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>
