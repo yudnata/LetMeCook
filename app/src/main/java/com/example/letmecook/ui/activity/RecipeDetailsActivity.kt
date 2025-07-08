@@ -1,26 +1,37 @@
 package com.example.letmecook.ui.activity
 
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.EditText
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.letmecook.R
+import com.example.letmecook.adapter.CommentAdapter
 import com.example.letmecook.databinding.ActivityRecipeDetailsBinding
 import com.example.letmecook.model.BookmarkModel
+import com.example.letmecook.model.CommentModel
 import com.example.letmecook.model.Recipe
 import com.example.letmecook.repository.RecipeRepositoryImpl
 import com.example.letmecook.utils.LoadingUtils
 import com.example.letmecook.viewmodel.BookmarkViewModel
+import com.example.letmecook.viewmodel.CommentViewModel
 import com.example.letmecook.viewmodel.RecipeViewModel
 import com.google.firebase.auth.FirebaseAuth
+import java.text.DecimalFormat
 
 class RecipeDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityRecipeDetailsBinding
     private val recipeViewModel: RecipeViewModel by lazy { RecipeViewModel(RecipeRepositoryImpl()) }
     private val bookmarkViewModel: BookmarkViewModel by lazy { BookmarkViewModel() }
+    private val commentViewModel: CommentViewModel by lazy { CommentViewModel() }
+    private lateinit var commentAdapter: CommentAdapter
+
     private var recipeId: String = ""
     private var currentRecipe: Recipe? = null
     private lateinit var loader: LoadingUtils
@@ -42,8 +53,10 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
 
         setupUI()
+        setupRecyclerView()
         loadRecipeDetails()
         observeBookmarkChanges()
+        observeComments()
     }
 
     private fun setupUI() {
@@ -55,6 +68,22 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
         binding.bookmarkbutton.setOnClickListener {
             handleBookmark()
+        }
+        binding.submitCommentButton.setOnClickListener {
+            handleCommentSubmission()
+        }
+    }
+
+    private fun setupRecyclerView() {
+        commentAdapter = CommentAdapter(
+            emptyList(),
+            currentUserId,
+            onEditClick = { comment -> handleCommentEditing(comment) },
+            onDeleteClick = { comment -> handleCommentDeletion(comment) }
+        )
+        binding.commentsRecyclerView.apply {
+            layoutManager = LinearLayoutManager(this@RecipeDetailsActivity)
+            adapter = commentAdapter
         }
     }
 
@@ -81,6 +110,14 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+
+    private fun observeComments() {
+        commentViewModel.getComments(recipeId)
+        commentViewModel.comments.observe(this, Observer { comments ->
+            commentAdapter.updateComments(comments)
+            updateRating(comments)
+        })
     }
 
     private fun loadRecipeDetails() {
@@ -120,6 +157,30 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.contentLayout.visibility = View.VISIBLE
     }
 
+    private fun updateRating(comments: List<CommentModel>) {
+        if (comments.isNotEmpty()) {
+            var totalRating = 0.0f
+            comments.forEach { totalRating += it.rating }
+            val averageRating = totalRating / comments.size
+            val ratingCount = comments.size
+
+            val decimalFormat = DecimalFormat("#.#")
+            binding.ratingBar.rating = averageRating
+            binding.ratingCount.text = "(${decimalFormat.format(averageRating)} from $ratingCount ratings)"
+
+            // Update recipe in database
+            val updateData = mutableMapOf<String, Any>(
+                "averageRating" to averageRating,
+                "totalRatings" to ratingCount
+            )
+            recipeViewModel.updateRecipe(recipeId, updateData) { _, _ -> }
+
+        } else {
+            binding.ratingBar.rating = 0f
+            binding.ratingCount.text = "(No ratings yet)"
+        }
+    }
+
     private fun handleBookmark() {
         val userId = currentUserId
         val recipe = currentRecipe
@@ -146,5 +207,91 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 Toast.makeText(this, "Bookmark failed: $message", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    private fun handleCommentSubmission() {
+        val userId = currentUserId
+        if (userId == null) {
+            Toast.makeText(this, "Please login to leave a review", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val commentText = binding.commentEditText.text.toString().trim()
+        val rating = binding.addRatingBar.rating
+
+        if (commentText.isEmpty()) {
+            Toast.makeText(this, "Please write a comment", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (rating == 0.0f) {
+            Toast.makeText(this, "Please provide a rating", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        loader.show()
+        val newComment = CommentModel(
+            recipeId = recipeId,
+            userId = userId,
+            comment = commentText,
+            rating = rating,
+            timestamp = System.currentTimeMillis()
+        )
+
+        commentViewModel.addComment(newComment) { success, message ->
+            loader.dismiss()
+            if (success) {
+                Toast.makeText(this, "Review submitted successfully!", Toast.LENGTH_SHORT).show()
+                binding.commentEditText.text?.clear()
+                binding.addRatingBar.rating = 0f
+            } else {
+                Toast.makeText(this, "Failed to submit review: $message", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun handleCommentDeletion(comment: CommentModel) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Comment")
+            .setMessage("Are you sure you want to delete this comment?")
+            .setPositiveButton("Delete") { _, _ ->
+                loader.show()
+                commentViewModel.deleteComment(comment.id) { success, message ->
+                    loader.dismiss()
+                    if (success) {
+                        Toast.makeText(this, "Comment deleted successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to delete comment: $message", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun handleCommentEditing(comment: CommentModel) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_comment, null)
+        val editText = dialogView.findViewById<EditText>(R.id.editCommentEditText)
+        editText.setText(comment.comment)
+
+        AlertDialog.Builder(this)
+            .setTitle("Edit Comment")
+            .setView(dialogView)
+            .setPositiveButton("Save") { _, _ ->
+                val newCommentText = editText.text.toString().trim()
+                if (newCommentText.isNotEmpty()) {
+                    loader.show()
+                    commentViewModel.updateComment(comment.id, newCommentText) { success, message ->
+                        loader.dismiss()
+                        if (success) {
+                            Toast.makeText(this, "Comment updated successfully", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Failed to update comment: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
     }
 }

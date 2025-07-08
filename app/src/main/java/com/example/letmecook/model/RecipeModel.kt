@@ -15,6 +15,8 @@ data class Recipe (
     val creatorId: String = "",
     var creatorName: String = "",
     val imageUrl: String = "",
+    var averageRating: Float = 0.0f,
+    var totalRatings: Int = 0,
     @set:JvmName("setBookmarked")
     var isBookmarked: Boolean = false
 )
