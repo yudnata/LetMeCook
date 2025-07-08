@@ -2,6 +2,7 @@ package com.example.letmecook.ui.activity
 
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.viewpager2.widget.ViewPager2
 import com.bumptech.glide.Glide
 import com.example.letmecook.R
 import com.example.letmecook.adapter.RecipeDetailsViewPagerAdapter
@@ -74,7 +76,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
     private fun setupUI() {
         setSupportActionBar(binding.toolbar)
-        binding.collapsingToolbar.title = " " // Hapus judul dari toolbar
+        binding.collapsingToolbar.title = " "
         binding.backButton.setOnClickListener { finish() }
         binding.shareButton.setOnClickListener { Toast.makeText(this, "Share functionality coming soon", Toast.LENGTH_SHORT).show() }
         binding.favoriteButton.setOnClickListener {
@@ -97,7 +99,33 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 else -> null
             }
         }.attach()
+
+        // --- TAMBAHKAN LOGIKA INI ---
+        binding.viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                updateViewPagerHeight()
+            }
+        })
     }
+
+    private fun updateViewPagerHeight() {
+        val viewPager = binding.viewPager
+        val currentFragment = supportFragmentManager.findFragmentByTag("f" + viewPager.currentItem)
+        currentFragment?.view?.post {
+            val wMeasureSpec = View.MeasureSpec.makeMeasureSpec(viewPager.width, View.MeasureSpec.EXACTLY)
+            val hMeasureSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
+            currentFragment.view?.measure(wMeasureSpec, hMeasureSpec)
+
+            if (viewPager.layoutParams.height != currentFragment.view?.measuredHeight) {
+                viewPager.layoutParams = (viewPager.layoutParams as ViewGroup.LayoutParams).also {
+                    it.height = currentFragment.view?.measuredHeight ?: 0
+                }
+            }
+        }
+    }
+    // --- AKHIR PENAMBAHAN ---
+
 
     private fun setButtonToSavedState() {
         binding.bookmarkbutton.text = "Recipe Saved"
@@ -131,6 +159,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
             if (success && recipe != null) {
                 currentRecipe = recipe
                 displayRecipeDetails(recipe)
+                // --- Pindahkan pemanggilan update tinggi ke sini ---
+                binding.viewPager.post { updateViewPagerHeight() }
             } else {
                 Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
                 finish()
@@ -140,13 +170,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
 
     private fun displayRecipeDetails(recipe: Recipe) {
-        // --- PERBAIKI BAGIAN INI ---
         Glide.with(this)
             .load(recipe.imageUrl)
             .placeholder(R.drawable.placeholder_image)
             .error(R.drawable.placeholder_image)
             .into(binding.recipeImage)
-        // --- AKHIR PERBAIKAN ---
 
         binding.recipeTitle.text = recipe.title
         binding.recipeCategory.text = recipe.category
@@ -166,6 +194,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
         commentViewModel.getComments(recipeId)
         commentViewModel.comments.observe(this, Observer { comments ->
             updateRating(comments)
+            // --- Pindahkan pemanggilan update tinggi ke sini juga ---
+            binding.viewPager.post { updateViewPagerHeight() }
         })
 
         binding.contentLayout.visibility = View.VISIBLE
