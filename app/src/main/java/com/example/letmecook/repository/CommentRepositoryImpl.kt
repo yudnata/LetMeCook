@@ -80,7 +80,7 @@ class CommentRepositoryImpl : CommentRepository {
     override fun updateComment(commentId: String, newCommentText: String, newRating: Float, callback: (Boolean, String) -> Unit) {
         val updateData = mapOf(
             "comment" to newCommentText,
-            "rating" to newRating, // Tambahkan rating baru
+            "rating" to newRating,
             "edited" to true,
             "updateTimestamp" to System.currentTimeMillis()
         )
@@ -89,6 +89,18 @@ class CommentRepositoryImpl : CommentRepository {
                 callback(true, "Comment updated successfully")
             } else {
                 callback(false, task.exception?.message ?: "Failed to update comment")
+            }
+        }
+    }
+
+    override fun addReply(reply: CommentModel, callback: (Boolean, String) -> Unit) {
+        val replyId = reference.push().key ?: return
+        reply.id = replyId
+        reference.child(replyId).setValue(reply).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                callback(true, "Reply added successfully")
+            } else {
+                callback(false, task.exception?.message ?: "Failed to add reply")
             }
         }
     }

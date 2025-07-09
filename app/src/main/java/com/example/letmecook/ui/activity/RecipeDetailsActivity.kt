@@ -119,10 +119,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         commentAdapter = CommentAdapter(
-            emptyList(),
+            mutableListOf(),
             currentUserId,
             onEditClick = { comment -> handleCommentEditing(comment) },
-            onDeleteClick = { comment -> handleCommentDeletion(comment) }
+            onDeleteClick = { comment -> handleCommentDeletion(comment) },
+            onReplyClick = { comment -> handleCommentReply(comment) }
         )
         binding.commentsRecyclerView.apply {
             layoutManager = LinearLayoutManager(this@RecipeDetailsActivity)
@@ -135,8 +136,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         if (isBookmarked) {
             binding.bookmarkbutton.text = "Recipe Saved"
             binding.bookmarkbutton.isEnabled = false
-            // --- PERUBAHAN DI SINI ---
-            binding.bookmarkIconButton.setImageResource(R.drawable.ic_favorite_red_24) // Gunakan ikon merah
+            binding.bookmarkIconButton.setImageResource(R.drawable.ic_favorite_red_24)
         } else {
             binding.bookmarkbutton.text = "Save this recipe"
             binding.bookmarkbutton.isEnabled = true
@@ -161,7 +161,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
         commentViewModel.comments.observe(this, Observer { comments ->
             commentAdapter.updateComments(comments)
             updateRating(comments)
-            val userHasCommented = comments.any { it.userId == currentUserId }
+            val userHasCommented = comments.any { it.userId == currentUserId && it.parentId == null }
             updateCommentSectionVisibility(userHasCommented)
         })
     }
@@ -228,10 +228,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
     }
 
     private fun updateRating(comments: List<CommentModel>) {
-        if (comments.isNotEmpty()) {
-            val totalRating = comments.sumOf { it.rating.toDouble() }.toFloat()
-            val averageRating = totalRating / comments.size
-            val ratingCount = comments.size
+        val topLevelComments = comments.filter { it.parentId == null }
+        if (topLevelComments.isNotEmpty()) {
+            val totalRating = topLevelComments.sumOf { it.rating.toDouble() }.toFloat()
+            val averageRating = totalRating / topLevelComments.size
+            val ratingCount = topLevelComments.size
 
             val decimalFormat = DecimalFormat("#.#")
             binding.ratingBar.rating = averageRating
@@ -375,6 +376,45 @@ class RecipeDetailsActivity : AppCompatActivity() {
                     }
                 } else {
                     Toast.makeText(this, "Please provide a rating and comment.", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun handleCommentReply(comment: CommentModel) {
+        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_reply_comment, null)
+        val editText = dialogView.findViewById<EditText>(R.id.replyCommentEditText)
+
+        AlertDialog.Builder(this)
+            .setTitle("Reply to ${comment.userName}")
+            .setView(dialogView)
+            .setPositiveButton("Reply") { _, _ ->
+                val replyText = editText.text.toString().trim()
+                if (replyText.isNotEmpty()) {
+                    val userId = currentUserId
+                    if (userId == null) {
+                        Toast.makeText(this, "Please login to reply", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    loader.show()
+                    val newReply = CommentModel(
+                        recipeId = recipeId,
+                        userId = userId,
+                        comment = replyText,
+                        rating = 0f,
+                        timestamp = System.currentTimeMillis(),
+                        parentId = comment.id,
+                        parentUserName = comment.userName
+                    )
+                    commentViewModel.addComment(newReply) { success, message ->
+                        loader.dismiss()
+                        if (success) {
+                            Toast.makeText(this, "Reply posted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Failed to post reply: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
             .setNegativeButton("Cancel", null)

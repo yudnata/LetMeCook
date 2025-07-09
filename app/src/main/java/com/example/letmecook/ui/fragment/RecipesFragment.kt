@@ -92,16 +92,21 @@ class RecipesFragment : Fragment() {
     }
 
     private fun setupFilterChips() {
-        binding.filterChipGroup.setOnCheckedChangeListener { group, checkedId ->
-            currentFilter = when (checkedId) {
-                R.id.chipAll -> "All"
-                R.id.chipAppetizer -> "Appetizer"
-                R.id.chipMainCourse -> "Main Course"
-                R.id.chipDessert -> "Dessert"
-                R.id.chipSnack -> "Snack"
-                R.id.chipDrink -> "Drink"
-                R.id.chipVegetarian -> "Vegetarian"
-                else -> "All"
+        binding.filterChipGroup.setOnCheckedStateChangeListener { _, checkedIds ->
+            if (checkedIds.isNotEmpty()) {
+                currentFilter = when (checkedIds.first()) {
+                    R.id.chipAll -> "All"
+                    R.id.chipAppetizer -> "Appetizer"
+                    R.id.chipMainCourse -> "Main Course"
+                    R.id.chipDessert -> "Dessert"
+                    R.id.chipSnack -> "Snack"
+                    R.id.chipDrink -> "Drink"
+                    R.id.chipVegetarian -> "Vegetarian"
+                    else -> "All"
+                }
+            } else {
+                currentFilter = "All"
+                binding.chipAll.isChecked = true
             }
             filterRecipes()
         }

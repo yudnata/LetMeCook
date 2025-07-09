@@ -10,5 +10,7 @@ data class CommentModel(
     val rating: Float = 0.0f,
     val timestamp: Long = System.currentTimeMillis(),
     var edited: Boolean = false,
-    var updateTimestamp: Long? = null
+    var updateTimestamp: Long? = null,
+    val parentId: String? = null,
+    var parentUserName: String? = null // Menyimpan nama user yang dibalas
 )

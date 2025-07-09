@@ -14,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.letmecook.R
 import com.example.letmecook.adapter.CommentAdapter
-import com.example.letmecook.databinding.DialogEditCommentBinding
 import com.example.letmecook.databinding.FragmentRecipeReviewsBinding
 import com.example.letmecook.model.CommentModel
 import com.example.letmecook.utils.LoadingUtils
@@ -59,12 +58,15 @@ class RecipeReviewsFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
+
         commentAdapter = CommentAdapter(
-            emptyList(),
+            mutableListOf(),
             currentUserId,
             onEditClick = { comment -> handleCommentEditing(comment) },
-            onDeleteClick = { comment -> handleCommentDeletion(comment) }
+            onDeleteClick = { comment -> handleCommentDeletion(comment) },
+            onReplyClick = { comment -> handleCommentReply(comment) }
         )
+
         binding.commentsRecyclerView.apply {
             layoutManager = LinearLayoutManager(requireContext())
             adapter = commentAdapter
@@ -75,7 +77,7 @@ class RecipeReviewsFragment : Fragment() {
         commentViewModel.getComments(recipeId)
         commentViewModel.comments.observe(viewLifecycleOwner, Observer { comments ->
             commentAdapter.updateComments(comments)
-            val userHasCommented = comments.any { it.userId == currentUserId }
+            val userHasCommented = comments.any { it.userId == currentUserId && it.parentId == null }
             updateCommentSectionVisibility(userHasCommented)
         })
     }
@@ -174,6 +176,45 @@ class RecipeReviewsFragment : Fragment() {
                     }
                 } else {
                     Toast.makeText(requireContext(), "Comment cannot be empty", Toast.LENGTH_SHORT).show()
+                }
+            }
+            .setNegativeButton("Cancel", null)
+            .show()
+    }
+
+    private fun handleCommentReply(comment: CommentModel) {
+        val dialogView = LayoutInflater.from(requireContext()).inflate(R.layout.dialog_reply_comment, null)
+        val editText = dialogView.findViewById<EditText>(R.id.replyCommentEditText)
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Reply to ${comment.userName}")
+            .setView(dialogView)
+            .setPositiveButton("Reply") { _, _ ->
+                val replyText = editText.text.toString().trim()
+                if (replyText.isNotEmpty()) {
+                    val userId = currentUserId
+                    if (userId == null) {
+                        Toast.makeText(requireContext(), "Please login to reply", Toast.LENGTH_SHORT).show()
+                        return@setPositiveButton
+                    }
+                    loader.show()
+                    val newReply = CommentModel(
+                        recipeId = recipeId,
+                        userId = userId,
+                        comment = replyText,
+                        rating = 0f,
+                        timestamp = System.currentTimeMillis(),
+                        parentId = comment.id,
+                        parentUserName = comment.userName
+                    )
+                    commentViewModel.addComment(newReply) { success, message ->
+                        loader.dismiss()
+                        if (success) {
+                            Toast.makeText(requireContext(), "Reply posted", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(requireContext(), "Failed to post reply: $message", Toast.LENGTH_SHORT).show()
+                        }
+                    }
                 }
             }
             .setNegativeButton("Cancel", null)

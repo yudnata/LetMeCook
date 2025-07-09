@@ -7,4 +7,5 @@ interface CommentRepository {
     fun getComments(recipeId: String, callback: (List<CommentModel>, Boolean, String) -> Unit)
     fun deleteComment(commentId: String, callback: (Boolean, String) -> Unit)
     fun updateComment(commentId: String, newCommentText: String, newRating: Float, callback: (Boolean, String) -> Unit)
+    fun addReply(reply: CommentModel, callback: (Boolean, String) -> Unit)
 }

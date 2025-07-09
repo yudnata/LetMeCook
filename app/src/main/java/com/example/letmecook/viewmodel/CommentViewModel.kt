@@ -32,4 +32,8 @@ class CommentViewModel(private val repository: CommentRepository = CommentReposi
     fun updateComment(commentId: String, newCommentText: String, newRating: Float, callback: (Boolean, String) -> Unit) {
         repository.updateComment(commentId, newCommentText, newRating, callback)
     }
+
+    fun addReply(reply: CommentModel, callback: (Boolean, String) -> Unit) {
+        repository.addReply(reply, callback)
+    }
 }
