@@ -1,6 +1,8 @@
 package com.example.letmecook.ui.activity
 
+import android.os.Build
 import android.os.Bundle
+import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.EditText
@@ -48,6 +50,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
     private var currentRecipe: Recipe? = null
     private lateinit var loader: LoadingUtils
     private var currentUserId: String? = null
+    private var isBookmarked = false
+    private var userBookmarks: List<BookmarkModel> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -83,10 +87,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.collapsingToolbar.title = " "
         binding.backButton.setOnClickListener { finish() }
         binding.shareButton.setOnClickListener { Toast.makeText(this, "Share functionality coming soon", Toast.LENGTH_SHORT).show() }
-        binding.favoriteButton.setOnClickListener {
-            Toast.makeText(this, "Added to favorites", Toast.LENGTH_SHORT).show()
-            binding.favoriteButton.setImageResource(R.drawable.baseline_favorite_24)
+
+        binding.bookmarkIconButton.setOnClickListener {
+            handleBookmark()
         }
+
         binding.bookmarkbutton.setOnClickListener {
             handleBookmark()
         }
@@ -125,14 +130,18 @@ class RecipeDetailsActivity : AppCompatActivity() {
         }
     }
 
-    private fun setButtonToSavedState() {
-        binding.bookmarkbutton.text = "Recipe Saved"
-        binding.bookmarkbutton.isEnabled = false
-    }
-
-    private fun setButtonToNormalState() {
-        binding.bookmarkbutton.text = "Save this recipe"
-        binding.bookmarkbutton.isEnabled = true
+    private fun updateBookmarkState(isBookmarked: Boolean) {
+        this.isBookmarked = isBookmarked
+        if (isBookmarked) {
+            binding.bookmarkbutton.text = "Recipe Saved"
+            binding.bookmarkbutton.isEnabled = false
+            // --- PERUBAHAN DI SINI ---
+            binding.bookmarkIconButton.setImageResource(R.drawable.ic_favorite_red_24) // Gunakan ikon merah
+        } else {
+            binding.bookmarkbutton.text = "Save this recipe"
+            binding.bookmarkbutton.isEnabled = true
+            binding.bookmarkIconButton.setImageResource(R.drawable.baseline_favorite_border_24)
+        }
     }
 
     private fun observeBookmarkChanges() {
@@ -140,12 +149,9 @@ class RecipeDetailsActivity : AppCompatActivity() {
         if (userId != null) {
             bookmarkViewModel.listenForUserBookmarks(userId)
             bookmarkViewModel.userBookmarks.observe(this, Observer { bookmarks ->
-                val isBookmarked = bookmarks.any { it.recipeId == recipeId }
-                if (isBookmarked) {
-                    setButtonToSavedState()
-                } else {
-                    setButtonToNormalState()
-                }
+                this.userBookmarks = bookmarks
+                val bookmarked = bookmarks.any { it.recipeId == recipeId }
+                updateBookmarkState(bookmarked)
             })
         }
     }
@@ -176,7 +182,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                 currentRecipe = recipe
                 displayRecipeDetails(recipe)
             } else {
-                Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Failed to load recipe: $message", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
@@ -200,9 +206,16 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.recipeDescription.text = recipe.description
         binding.recipeIngredients.text = recipe.ingredients
 
-        val formattedProcess = recipe.process.split("\n").joinToString("\n\n")
-        binding.recipeProcess.text = formattedProcess
-        // --------------------------
+        val htmlSteps = recipe.process.split("\n").joinToString("") { step ->
+            "<p style='margin-bottom: 15px;'>$step</p>"
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            binding.recipeProcess.text = Html.fromHtml(htmlSteps, Html.FROM_HTML_MODE_COMPACT)
+        } else {
+            @Suppress("DEPRECATION")
+            binding.recipeProcess.text = Html.fromHtml(htmlSteps)
+        }
 
         binding.recipeHalalStatus.text = recipe.halalStatus
         if (recipe.halalStatus.equals("Halal", ignoreCase = true)) {
@@ -238,29 +251,40 @@ class RecipeDetailsActivity : AppCompatActivity() {
 
     private fun handleBookmark() {
         val userId = currentUserId
-        val recipe = currentRecipe
-
         if (userId == null) {
             Toast.makeText(this, "Please login to bookmark this recipe", Toast.LENGTH_SHORT).show()
             return
         }
 
-        if (recipe == null) {
+        if (currentRecipe == null) {
             Toast.makeText(this, "Recipe data is not available", Toast.LENGTH_SHORT).show()
             return
         }
 
-        binding.bookmarkbutton.isEnabled = false
-        loader.show()
+        if (isBookmarked) {
+            val bookmarkToDelete = userBookmarks.find { it.recipeId == recipeId }
 
-        val newBookmark = BookmarkModel(recipeId = recipe.id, userId = userId)
-        bookmarkViewModel.createBookmark(newBookmark) { success, message, _ ->
-            loader.dismiss()
-            if (success) {
-                Toast.makeText(this, "Bookmark successful!", Toast.LENGTH_SHORT).show()
-            } else {
-                Toast.makeText(this, "Bookmark failed: $message", Toast.LENGTH_SHORT).show()
-                binding.bookmarkbutton.isEnabled = true
+            if (bookmarkToDelete != null) {
+                loader.show()
+                bookmarkViewModel.deleteBookmark(bookmarkToDelete.id) { success, message ->
+                    loader.dismiss()
+                    if (success) {
+                        Toast.makeText(this, "Bookmark removed", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to remove bookmark: $message", Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        } else {
+            loader.show()
+            val newBookmark = BookmarkModel(recipeId = recipeId, userId = userId)
+            bookmarkViewModel.createBookmark(newBookmark) { success, message, _ ->
+                loader.dismiss()
+                if (success) {
+                    Toast.makeText(this, "Recipe saved!", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Failed to save recipe: $message", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
