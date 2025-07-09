@@ -29,6 +29,7 @@ import com.example.letmecook.viewmodel.BookmarkViewModel
 import com.example.letmecook.viewmodel.RecipeViewModel
 import com.example.letmecook.viewmodel.UserViewModel
 import com.google.firebase.auth.FirebaseAuth
+import kotlin.math.log10
 
 class HomeFragment : Fragment() {
     private var _binding: FragmentHomeBinding? = null
@@ -67,7 +68,7 @@ class HomeFragment : Fragment() {
         setupViewModelObservers()
         loadInitialData()
         setupSeeAllButton()
-        loadUserData() // Panggil fungsi untuk memuat data pengguna
+        loadUserData()
     }
 
     private fun loadUserData() {
@@ -206,12 +207,10 @@ class HomeFragment : Fragment() {
                     if(isAdded) binding.bannerRecipeAuthor.text = "by ${user?.fullName ?: "Unknown"}"
                 }
 
-                // --- UBAH BAGIAN INI ---
                 Glide.with(this@HomeFragment)
                     .load(recipe.imageUrl)
-                    .placeholder(R.drawable.placeholder_image) // Gunakan placeholder baru
+                    .placeholder(R.drawable.placeholder_image)
                     .into(binding.bannerRecipeImage)
-                // --- AKHIR PERUBAHAN ---
 
                 binding.bannerRecipeImage.startAnimation(fadeIn)
                 binding.bannerRecipeTitle.startAnimation(fadeIn)
@@ -233,9 +232,18 @@ class HomeFragment : Fragment() {
             recipe.copy(isBookmarked = bookmarkedRecipeIds.contains(recipe.id))
         }
 
-        val sortedByRating = updatedRecipes.sortedByDescending { it.averageRating }
+        // --- KODE PERINGKAT YANG DIPERBAIKI ---
+        val sortedByWeightedRating = updatedRecipes.sortedByDescending { recipe ->
+            val rating = recipe.averageRating.toDouble()
+            val numRatings = recipe.totalRatings.toDouble()
+            if (numRatings > 0) {
+                rating * log10(numRatings + 1)
+            } else {
+                0.0 // Jika tidak ada rating, skornya 0
+            }
+        }
 
-        val categorizedList = if (currentFilter == "All") sortedByRating else sortedByRating.filter { it.category == currentFilter }
+        val categorizedList = if (currentFilter == "All") sortedByWeightedRating else sortedByWeightedRating.filter { it.category == currentFilter }
         val searchQuery = binding.searchEditText.text.toString()
         val finalList = if (searchQuery.isBlank()) categorizedList else categorizedList.filter { it.title.contains(searchQuery, ignoreCase = true) }
 

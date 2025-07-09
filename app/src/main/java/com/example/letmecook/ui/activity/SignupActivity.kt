@@ -85,19 +85,18 @@ class SignupActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
 
-            uploadImage()
+            loadingUtils.show()
+            uploadImageAndSignup()
         }
 
         binding.login.setOnClickListener {
             startActivity(Intent(this@SignupActivity, LoginActivity::class.java))
         }
 
-        // --- KODE YANG DIPERBAIKI ---
         ViewCompat.setOnApplyWindowInsetsListener(binding.main) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             val ime = insets.getInsets(WindowInsetsCompat.Type.ime())
 
-            // Menyesuaikan padding bawah untuk memberi ruang bagi keyboard
             val targetPadding = if (ime.bottom > 0) {
                 ime.bottom
             } else {
@@ -106,7 +105,6 @@ class SignupActivity : AppCompatActivity() {
 
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, targetPadding)
 
-            // Mengembalikan insets yang tidak dipakai (agar sistem bisa menanganinya)
             WindowInsetsCompat.Builder(insets).setInsets(
                 WindowInsetsCompat.Type.ime(),
                 androidx.core.graphics.Insets.of(0, 0, 0, 0)
@@ -114,26 +112,24 @@ class SignupActivity : AppCompatActivity() {
         }
     }
 
-    private fun uploadImage() {
+    private fun uploadImageAndSignup() {
         if (imageUri != null) {
-            loadingUtils.show()
             userViewModel.uploadImage(this, imageUri!!) { imageUrl ->
-                Log.d("SignupActivity", "Image URL: $imageUrl")
                 if (imageUrl != null) {
                     signupUser(imageUrl)
                 } else {
                     Log.e("SignupActivity", "Failed to upload image to Cloudinary")
-
-                    signupUser("")
+                    loadingUtils.dismiss()
+                    Snackbar.make(binding.main, "Image upload failed. Please try again.", Snackbar.LENGTH_LONG).show()
                 }
             }
         } else {
             Log.d("SignupActivity", "No image selected, proceeding without image")
-            signupUser("")
+            signupUser("") // Lanjutkan registrasi tanpa URL gambar
         }
     }
 
-    private fun signupUser(url: String) {
+    private fun signupUser(imageUrl: String) {
         val fullName = binding.editFullName.text.toString().trim()
         val email = binding.editEmail.text.toString().trim()
         val password = binding.editPassword.text.toString().trim()
@@ -158,26 +154,30 @@ class SignupActivity : AppCompatActivity() {
                     gender,
                     country,
                     city,
-                    url
+                    imageUrl
                 )
                 addUserToDatabase(userModel)
             } else {
                 loadingUtils.dismiss()
                 Log.e("SignupActivity", "Signup failed: $message")
-                Snackbar.make(binding.main, message, Snackbar.LENGTH_SHORT).show()
+                Snackbar.make(binding.main, "Registration failed: $message", Snackbar.LENGTH_LONG).show()
             }
         }
     }
 
     private fun addUserToDatabase(userModel: UserModel) {
         userViewModel.addUserToDatabase(userModel) { success, message ->
-            loadingUtils.dismiss()
+            loadingUtils.dismiss() // Selalu hentikan loading di sini
             if (success) {
                 Log.d("SignupActivity", "User added to database: $message")
-                Toast.makeText(this@SignupActivity, message, Toast.LENGTH_SHORT).show()
-                startActivity(Intent(this@SignupActivity, LoginActivity::class.java))
+                Toast.makeText(this@SignupActivity, "Registration successful!", Toast.LENGTH_SHORT).show()
+                val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(intent)
+                finish()
             } else {
                 Log.e("SignupActivity", "Failed to add user to database: $message")
+                Snackbar.make(binding.main, "Registration failed: Could not save user data.", Snackbar.LENGTH_LONG).show()
             }
         }
     }
