@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.RatingBar
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.letmecook.R
 import com.example.letmecook.model.Recipe
 import com.google.android.material.button.MaterialButton
+import java.text.DecimalFormat
 
 class RecipesAdapter(
     private var allRecipes: List<Recipe> = emptyList(),
@@ -21,10 +23,11 @@ class RecipesAdapter(
 
     private var filteredRecipes: List<Recipe> = allRecipes
 
+
     class RecipeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val recipeImage: ImageView = view.findViewById(R.id.recipeImage)
         val categoryBadge: TextView = view.findViewById(R.id.categoryBadge)
-        val cuisineBadge: TextView = view.findViewById(R.id.cuisineBadge) // TextView baru
+        val cuisineBadge: TextView = view.findViewById(R.id.cuisineBadge)
         val recipeTitle: TextView = view.findViewById(R.id.recipeTitle)
         val authorName: TextView = view.findViewById(R.id.authorName)
         val recipeProtein: TextView = view.findViewById(R.id.recipeProtein)
@@ -32,7 +35,10 @@ class RecipesAdapter(
         val recipeCarbs: TextView = view.findViewById(R.id.recipeCarbs)
         val recipeFats: TextView = view.findViewById(R.id.recipeFats)
         val bookmarkButton: MaterialButton = view.findViewById(R.id.bookmarkButton)
+        val ratingBar: RatingBar = view.findViewById(R.id.ratingBar)
+        val ratingCountText: TextView = view.findViewById(R.id.ratingCountText)
     }
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecipeViewHolder {
         val view = LayoutInflater.from(parent.context)
@@ -40,16 +46,15 @@ class RecipesAdapter(
         return RecipeViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: RecipeViewHolder, position: Int) {
         val recipe = filteredRecipes[position]
 
-        // --- UBAH BAGIAN INI ---
         Glide.with(holder.itemView.context)
             .load(recipe.imageUrl)
-            .placeholder(R.drawable.placeholder_image) // Tambahkan placeholder
-            .error(R.drawable.placeholder_image)     // Tambahkan error placeholder
+            .placeholder(R.drawable.placeholder_image)
+            .error(R.drawable.placeholder_image)
             .into(holder.recipeImage)
-        // --- AKHIR PERUBAHAN ---
 
         holder.categoryBadge.text = recipe.category
         holder.cuisineBadge.text = recipe.cuisine
@@ -74,6 +79,14 @@ class RecipesAdapter(
         } else {
             holder.bookmarkButton.text = "Save Recipe"
             holder.bookmarkButton.isEnabled = true
+        }
+
+        val decimalFormat = DecimalFormat("#.#")
+        holder.ratingBar.rating = recipe.averageRating
+        if (recipe.totalRatings > 0) {
+            holder.ratingCountText.text = "(${decimalFormat.format(recipe.averageRating)} from ${recipe.totalRatings} users)"
+        } else {
+            holder.ratingCountText.text = "(No ratings yet)"
         }
 
         holder.itemView.setOnClickListener { onRecipeClick(recipe) }
