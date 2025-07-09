@@ -349,6 +349,8 @@ class RecipeDetailsActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
+
+
     private fun handleCommentEditing(comment: CommentModel) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_comment, null)
         val editText = dialogView.findViewById<EditText>(R.id.editCommentEditText)
@@ -357,25 +359,40 @@ class RecipeDetailsActivity : AppCompatActivity() {
         editText.setText(comment.comment)
         ratingBar.rating = comment.rating
 
+
+        if (comment.parentId != null) {
+            ratingBar.visibility = View.GONE
+        } else {
+            ratingBar.visibility = View.VISIBLE
+        }
+
         AlertDialog.Builder(this)
             .setTitle("Edit Review")
             .setView(dialogView)
             .setPositiveButton("Save") { _, _ ->
                 val newCommentText = editText.text.toString().trim()
-                val newRating = ratingBar.rating
 
-                if (newCommentText.isNotEmpty() && newRating > 0) {
-                    loader.show()
-                    commentViewModel.updateComment(comment.id, newCommentText, newRating) { success, message ->
-                        loader.dismiss()
-                        if (success) {
-                            Toast.makeText(this, "Review updated successfully", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Failed to update review: $message", Toast.LENGTH_SHORT).show()
-                        }
+                val newRating = if (comment.parentId != null) 0f else ratingBar.rating
+
+                if (newCommentText.isEmpty()) {
+                    Toast.makeText(this, "Comment cannot be empty.", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+
+                if (comment.parentId == null && newRating == 0f) {
+                    Toast.makeText(this, "Please provide a rating.", Toast.LENGTH_SHORT).show()
+                    return@setPositiveButton
+                }
+
+                loader.show()
+                commentViewModel.updateComment(comment.id, newCommentText, newRating) { success, message ->
+                    loader.dismiss()
+                    if (success) {
+                        Toast.makeText(this, "Review updated successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this, "Failed to update review: $message", Toast.LENGTH_SHORT).show()
                     }
-                } else {
-                    Toast.makeText(this, "Please provide a rating and comment.", Toast.LENGTH_SHORT).show()
                 }
             }
             .setNegativeButton("Cancel", null)
@@ -402,7 +419,7 @@ class RecipeDetailsActivity : AppCompatActivity() {
                         recipeId = recipeId,
                         userId = userId,
                         comment = replyText,
-                        rating = 0f,
+                        rating = 0f, // Rating untuk balasan selalu 0
                         timestamp = System.currentTimeMillis(),
                         parentId = comment.id,
                         parentUserName = comment.userName
