@@ -64,15 +64,32 @@ class AddRecipeActivity : AppCompatActivity() {
             imageUtils.launchGallery(this)
         }
 
+        binding.addIngredientButton.setOnClickListener {
+            addIngredientView()
+        }
+
         binding.addStepButton.setOnClickListener {
             addStepView()
         }
 
+        addIngredientView()
         addStepView()
 
         binding.addRecipeBtn.setOnClickListener {
             handleCreateRecipe()
         }
+    }
+
+    private fun addIngredientView() {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val ingredientView = inflater.inflate(R.layout.item_ingredient_input, null)
+
+        val deleteButton = ingredientView.findViewById<View>(R.id.deleteIngredientButton)
+        deleteButton.setOnClickListener {
+            binding.ingredientsContainer.removeView(ingredientView)
+        }
+
+        binding.ingredientsContainer.addView(ingredientView)
     }
 
     private fun addStepView() {
@@ -85,6 +102,13 @@ class AddRecipeActivity : AppCompatActivity() {
         }
 
         binding.stepsContainer.addView(stepView)
+    }
+
+    private fun getIngredientsAsString(): String {
+        return binding.ingredientsContainer.children
+            .map { it.findViewById<EditText>(R.id.editIngredientText).text.toString().trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
     }
 
     private fun getStepsAsString(): String {
@@ -109,6 +133,7 @@ class AddRecipeActivity : AppCompatActivity() {
     private fun createRecipe(imageUrl: String) {
         val title = binding.recipeTitle.text.toString().trim()
         val description = binding.recipeDesc.text.toString().trim()
+        val ingredients = getIngredientsAsString()
         val process = getStepsAsString()
         val duration = binding.recipeDuration.text.toString().trim()
         val carbs = binding.recipeCarbs.text.toString().trim()
@@ -118,7 +143,7 @@ class AddRecipeActivity : AppCompatActivity() {
         val cuisine = binding.selectCuisine.selectedItem.toString()
         val halalStatus = binding.selectHalalStatus.selectedItem.toString()
 
-        if (title.isEmpty() || description.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty() || cuisine.isEmpty() || halalStatus.isEmpty()) {
+        if (title.isEmpty() || description.isEmpty() || ingredients.isEmpty() || process.isEmpty() || duration.isEmpty() || carbs.isEmpty() || proteins.isEmpty() || fats.isEmpty() || category.isEmpty() || cuisine.isEmpty() || halalStatus.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
             loader.dismiss()
             return
@@ -132,6 +157,7 @@ class AddRecipeActivity : AppCompatActivity() {
         val recipe = Recipe(
             title = title,
             description = description,
+            ingredients = ingredients,
             process = process,
             duration = duration,
             carbs = carbs,

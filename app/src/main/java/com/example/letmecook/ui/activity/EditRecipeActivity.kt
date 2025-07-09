@@ -11,11 +11,10 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.children
 import com.example.letmecook.R
 import com.example.letmecook.databinding.ActivityEditRecipeBinding
+import com.example.letmecook.model.Recipe // Pastikan model di-import
 import com.example.letmecook.repository.RecipeRepositoryImpl
 import com.example.letmecook.utils.ImageUtils
 import com.example.letmecook.utils.LoadingUtils
@@ -50,27 +49,67 @@ class EditRecipeActivity : AppCompatActivity() {
         imageUtils = ImageUtils(this)
         recipeViewModel = RecipeViewModel(RecipeRepositoryImpl())
 
-
+        // Hanya ambil ID dari Intent
         recipeId = intent.getStringExtra("RECIPE_ID")
-        val title = intent.getStringExtra("RECIPE_TITLE") ?: ""
-        val description = intent.getStringExtra("RECIPE_DESCRIPTION") ?: ""
-        val process = intent.getStringExtra("RECIPE_PROCESS") ?: ""
-        val duration = intent.getStringExtra("RECIPE_DURATION") ?: ""
-        val carbs = intent.getStringExtra("RECIPE_CARBS") ?: ""
-        val proteins = intent.getStringExtra("RECIPE_PROTEINS") ?: ""
-        val fats = intent.getStringExtra("RECIPE_FATS") ?: ""
-        val category = intent.getStringExtra("RECIPE_CATEGORY") ?: ""
-        val cuisine = intent.getStringExtra("RECIPE_CUISINE") ?: ""
-        val halalStatus = intent.getStringExtra("RECIPE_HALAL_STATUS") ?: ""
-        currentImageUrl = intent.getStringExtra("RECIPE_IMAGE_URL") ?: ""
 
-        binding.recipeTitle.setText(title)
-        binding.recipeDesc.setText(description)
-        binding.recipeDuration.setText(duration)
-        binding.recipeCarbs.setText(carbs)
-        binding.recipeProteins.setText(proteins)
-        binding.recipeFats.setText(fats)
+        if (recipeId.isNullOrEmpty()) {
+            Toast.makeText(this, "Recipe ID not found.", Toast.LENGTH_SHORT).show()
+            finish()
+            return
+        }
 
+
+        loadRecipeData()
+
+        imageUtils.registerActivity { uri ->
+            uri?.let {
+                imageUri = it
+                Picasso.get().load(it).into(binding.imageBrowse)
+            }
+        }
+
+        binding.imageBrowse.setOnClickListener {
+            imageUtils.launchGallery(this)
+        }
+
+        binding.addIngredientButton.setOnClickListener {
+            addIngredientView()
+        }
+
+        binding.addStepButton.setOnClickListener {
+            addStepView()
+        }
+
+        binding.editRecipeBtn.setOnClickListener {
+            handleUpdateRecipe()
+        }
+    }
+
+
+    private fun loadRecipeData() {
+        loader.show()
+        recipeViewModel.getRecipe(recipeId!!) { recipe, success, message ->
+            loader.dismiss()
+            if (success && recipe != null) {
+
+                populateUi(recipe)
+            } else {
+                Toast.makeText(this, "Failed to load recipe: $message", Toast.LENGTH_SHORT).show()
+                finish()
+            }
+        }
+    }
+
+    // --- FUNGSI BARU UNTUK MENGISI UI ---
+    private fun populateUi(recipe: Recipe) {
+        binding.recipeTitle.setText(recipe.title)
+        binding.recipeDesc.setText(recipe.description)
+        binding.recipeDuration.setText(recipe.duration)
+        binding.recipeCarbs.setText(recipe.carbs)
+        binding.recipeProteins.setText(recipe.proteins)
+        binding.recipeFats.setText(recipe.fats)
+
+        currentImageUrl = recipe.imageUrl
         if (!currentImageUrl.isNullOrEmpty()) {
             Picasso.get()
                 .load(currentImageUrl)
@@ -81,51 +120,54 @@ class EditRecipeActivity : AppCompatActivity() {
             binding.imageBrowse.setImageResource(R.drawable.placeholder_image)
         }
 
-        val steps = process.split("\n").filter { it.isNotBlank() }
+
+        binding.ingredientsContainer.removeAllViews()
+        val ingredientList = recipe.ingredients.split("\n").filter { it.isNotBlank() }
+        if (ingredientList.isNotEmpty()) {
+            for (ingredient in ingredientList) {
+                addIngredientView(ingredient)
+            }
+        } else {
+            addIngredientView() // Tambahkan satu jika kosong
+        }
+
+
+        binding.stepsContainer.removeAllViews()
+        val steps = recipe.process.split("\n").filter { it.isNotBlank() }
         if (steps.isNotEmpty()) {
             for (step in steps) {
                 addStepView(step)
             }
         } else {
-            addStepView()
+            addStepView() // Tambahkan satu jika kosong
         }
 
-        val categorySpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_categories, android.R.layout.simple_spinner_dropdown_item)
-        binding.selectCategory.adapter = categorySpinnerAdapter
+        // Setup spinner
         val categories = resources.getStringArray(R.array.recipe_categories)
-        val categoryIndex = categories.indexOf(category)
-        if (categoryIndex >= 0) binding.selectCategory.setSelection(categoryIndex)
+        binding.selectCategory.setSelection(categories.indexOf(recipe.category).coerceAtLeast(0))
 
-        val cuisineSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_cuisines, android.R.layout.simple_spinner_dropdown_item)
-        binding.selectCuisine.adapter = cuisineSpinnerAdapter
         val cuisines = resources.getStringArray(R.array.recipe_cuisines)
-        val cuisineIndex = cuisines.indexOf(cuisine)
-        if (cuisineIndex >= 0) binding.selectCuisine.setSelection(cuisineIndex)
+        binding.selectCuisine.setSelection(cuisines.indexOf(recipe.cuisine).coerceAtLeast(0))
 
-        val halalStatusSpinnerAdapter = ArrayAdapter.createFromResource(this, R.array.recipe_halal_status, android.R.layout.simple_spinner_dropdown_item)
-        binding.selectHalalStatus.adapter = halalStatusSpinnerAdapter
         val halalStatuses = resources.getStringArray(R.array.recipe_halal_status)
-        val halalStatusIndex = halalStatuses.indexOf(halalStatus)
-        if (halalStatusIndex >= 0) binding.selectHalalStatus.setSelection(halalStatusIndex)
+        binding.selectHalalStatus.setSelection(halalStatuses.indexOf(recipe.halalStatus).coerceAtLeast(0))
+    }
 
-        imageUtils.registerActivity { uri ->
-            uri?.let {
-                imageUri = it
-                Picasso.get().load(it).into(binding.imageBrowse)
-            }
-        }
-        binding.imageBrowse.setOnClickListener {
-            imageUtils.launchGallery(this)
-        }
+    private fun addIngredientView(text: String? = null) {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val ingredientView = inflater.inflate(R.layout.item_ingredient_input, null)
 
-        binding.addStepButton.setOnClickListener {
-            addStepView()
+        val editText = ingredientView.findViewById<EditText>(R.id.editIngredientText)
+        text?.let {
+            editText.setText(it)
         }
 
-        binding.editRecipeBtn.setOnClickListener {
-            handleUpdateRecipe()
+        val deleteButton = ingredientView.findViewById<View>(R.id.deleteIngredientButton)
+        deleteButton.setOnClickListener {
+            binding.ingredientsContainer.removeView(ingredientView)
         }
 
+        binding.ingredientsContainer.addView(ingredientView)
     }
 
     private fun addStepView(text: String? = null) {
@@ -143,6 +185,13 @@ class EditRecipeActivity : AppCompatActivity() {
         }
 
         binding.stepsContainer.addView(stepView)
+    }
+
+    private fun getIngredientsAsString(): String {
+        return binding.ingredientsContainer.children
+            .map { it.findViewById<EditText>(R.id.editIngredientText).text.toString().trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(separator = "\n")
     }
 
     private fun getStepsAsString(): String {
@@ -173,6 +222,7 @@ class EditRecipeActivity : AppCompatActivity() {
     private fun updateRecipeInFirebase(imageUrl: String) {
         val newTitle = binding.recipeTitle.text.toString().trim()
         val newDescription = binding.recipeDesc.text.toString().trim()
+        val newIngredients = getIngredientsAsString()
         val newProcess = getStepsAsString()
         val newDuration = binding.recipeDuration.text.toString().trim()
         val newCarbs = binding.recipeCarbs.text.toString().trim()
@@ -182,7 +232,7 @@ class EditRecipeActivity : AppCompatActivity() {
         val newCuisine = binding.selectCuisine.selectedItem.toString()
         val newHalalStatus = binding.selectHalalStatus.selectedItem.toString()
 
-        if (newTitle.isEmpty() || newDescription.isEmpty() || newProcess.isEmpty() || newDuration.isEmpty()) {
+        if (newTitle.isEmpty() || newDescription.isEmpty() || newIngredients.isEmpty() || newProcess.isEmpty() || newDuration.isEmpty()) {
             Toast.makeText(this, "Please fill in all required fields", Toast.LENGTH_SHORT).show()
             loader.dismiss()
             return
@@ -191,6 +241,7 @@ class EditRecipeActivity : AppCompatActivity() {
         val data = mutableMapOf<String, Any>(
             "title" to newTitle,
             "description" to newDescription,
+            "ingredients" to newIngredients,
             "process" to newProcess,
             "duration" to newDuration,
             "carbs" to newCarbs,
@@ -206,7 +257,7 @@ class EditRecipeActivity : AppCompatActivity() {
             loader.dismiss()
             if (success) {
                 Toast.makeText(this, "Recipe updated successfully!", Toast.LENGTH_SHORT).show()
-                finish()
+                finish() // Kembali ke halaman detail
             } else {
                 Snackbar.make(
                     binding.main,

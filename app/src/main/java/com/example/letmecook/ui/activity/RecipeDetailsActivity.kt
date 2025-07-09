@@ -198,7 +198,11 @@ class RecipeDetailsActivity : AppCompatActivity() {
         binding.recipeCarbs.text = recipe.carbs
 
         binding.recipeDescription.text = recipe.description
-        binding.recipeProcess.text = recipe.process
+        binding.recipeIngredients.text = recipe.ingredients
+
+        val formattedProcess = recipe.process.split("\n").joinToString("\n\n")
+        binding.recipeProcess.text = formattedProcess
+        // --------------------------
 
         binding.recipeHalalStatus.text = recipe.halalStatus
         if (recipe.halalStatus.equals("Halal", ignoreCase = true)) {
@@ -320,8 +324,6 @@ class RecipeDetailsActivity : AppCompatActivity() {
             .setNegativeButton("Cancel", null)
             .show()
     }
-
-    // --- UBAH FUNGSI INI ---
     private fun handleCommentEditing(comment: CommentModel) {
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_edit_comment, null)
         val editText = dialogView.findViewById<EditText>(R.id.editCommentEditText)

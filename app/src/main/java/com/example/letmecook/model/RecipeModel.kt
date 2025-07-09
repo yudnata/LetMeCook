@@ -4,6 +4,7 @@ data class Recipe (
     var id: String = "",
     val title: String = "",
     val description: String = "",
+    val ingredients: String = "",
     val process: String = "",
     val duration: String = "",
     val carbs: String = "",

@@ -31,7 +31,11 @@ class RecipeOverviewFragment : Fragment() {
         recipeViewModel.selectedRecipe.observe(viewLifecycleOwner, Observer { recipe ->
             recipe?.let {
                 binding.recipeDescription.text = it.description
-                binding.recipeProcess.text = it.process
+                binding.recipeIngredients.text = it.ingredients
+
+                val formattedProcess = it.process.split("\n").joinToString("\n\n")
+                binding.recipeProcess.text = formattedProcess
+                // -------------------------
             }
         })
     }

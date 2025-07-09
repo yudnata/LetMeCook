@@ -92,7 +92,8 @@
             <EditText
                 android:id="@+id/recipeDesc"
                 android:layout_width="match_parent"
-                android:layout_height="80dp"
+                android:layout_height="wrap_content"
+                android:minHeight="80dp"
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="4dp"
                 android:layout_marginEnd="36dp"
@@ -106,6 +107,39 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView4" />
+            <TextView
+                android:id="@+id/textViewIngredients"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="38dp"
+                android:layout_marginTop="12dp"
+                android:text="Recipe Ingredients"
+                android:textColor="@color/black"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/recipeDesc" />
+
+            <LinearLayout
+                android:id="@+id/ingredientsContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="36dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginEnd="36dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/textViewIngredients" />
+
+            <Button
+                android:id="@+id/addIngredientButton"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+ Add Ingredient"
+                android:textAllCaps="false"
+                app:layout_constraintStart_toStartOf="@id/ingredientsContainer"
+                app:layout_constraintTop_toBottomOf="@id/ingredientsContainer" />
+
 
             <TextView
                 android:id="@+id/textView44"
@@ -116,7 +150,7 @@
                 android:text="Recipe Process"
                 android:textColor="@color/black"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recipeDesc" />
+                app:layout_constraintTop_toBottomOf="@+id/addIngredientButton" />
 
             <LinearLayout
                 android:id="@+id/stepsContainer"
